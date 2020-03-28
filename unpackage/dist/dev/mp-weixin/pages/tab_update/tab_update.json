@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "最近更新",
+  "navigationBarBackgroundColor": "#0387FE",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "book-item": "/components/BookItem/BookItem"
+  }
+}

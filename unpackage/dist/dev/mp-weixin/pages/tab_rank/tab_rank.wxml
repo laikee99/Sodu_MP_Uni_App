@@ -1,0 +1,1 @@
+<view class="tab-rank"><block wx:for="{{books}}" wx:for-item="item" wx:for-index="__i0__" wx:key="bookId"><book-item vue-id="{{'f0a92b00-1-'+__i0__}}" book="{{item}}" bind:__l="__l"></book-item></block></view>

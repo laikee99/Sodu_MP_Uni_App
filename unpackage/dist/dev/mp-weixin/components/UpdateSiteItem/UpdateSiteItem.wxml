@@ -1,0 +1,1 @@
+<view data-event-opts="{{[['tap',[['handleItemClick',['$event']]]]]}}" class="book-item-container" bindtap="__e"><view class="top"><view class="name-contaienr"><text class="name">{{''+book.chapterName+''}}</text></view></view><view class="bottom"><view class="source-name">{{''+book.lyWeb+''}}</view><text class="time">{{''+book.updateTime+''}}</text></view></view>

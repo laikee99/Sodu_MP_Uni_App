@@ -1,0 +1,32 @@
+{
+  "description": "项目配置文件。",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.9.2",
+  "appid": "wx7d71975d22842091",
+  "projectname": "Sodu_MP_Uni_App",
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "current": -1,
+      "list": []
+    },
+    "miniprogram": {
+      "current": -1,
+      "list": []
+    }
+  }
+}

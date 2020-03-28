@@ -1,0 +1,13 @@
+.tab-search-container {
+  position: relative;
+  padding: 110rpx 0 0 0;
+}
+.tab-search-container .search-container {
+  position: fixed;
+  background: white;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+}
+

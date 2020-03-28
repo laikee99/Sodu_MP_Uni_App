@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#0387FE",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "book-item": "/components/UpdateSiteItem/UpdateSiteItem"
+  }
+}

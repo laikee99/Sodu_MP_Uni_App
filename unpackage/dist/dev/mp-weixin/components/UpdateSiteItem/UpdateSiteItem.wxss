@@ -1,0 +1,92 @@
+.book-item-container {
+  height: 150rpx;
+  width: 100%;
+  position: relative;
+  padding: 20rpx 20rpx 0rpx 20rpx;
+  box-sizing: border-box;
+  line-height: 40rpx;
+  font-size: 26rpx;
+  overflow: hidden;
+}
+.book-item-container:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 1rpx;
+  border-bottom: 1rpx solid #dbdbdb;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.book-item-container .top {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.book-item-container .top .name-contaienr {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  overflow: hidden;
+}
+.book-item-container .top .name {
+  font-size: 30rpx;
+  word-break: keep-all;
+  /* 不换行 */
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  /* 内容超出宽度时隐藏超出部分的内容 */
+  text-overflow: ellipsis;
+  /* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+}
+.book-item-container .top .new {
+  -webkit-flex-shrink: 0;
+          flex-shrink: 0;
+  height: 50rpx;
+  width: 60rpx;
+  background: url(data:image/png;base64,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) no-repeat;
+  background-size: 100% 100%;
+  margin-left: 15rpx;
+}
+.book-item-container .bottom {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  color: #888;
+  line-height: 80rpx;
+  font-weight: 300;
+  overflow: hidden;
+}
+.book-item-container .bottom .source-name {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+  word-break: keep-all;
+  /* 不换行 */
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  /* 内容超出宽度时隐藏超出部分的内容 */
+  text-overflow: ellipsis;
+  /* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+}
+.book-item-container .bottom .time {
+  width: 240rpx;
+  color: #909090;
+  font-weight: 300;
+  text-align: right;
+}
+
