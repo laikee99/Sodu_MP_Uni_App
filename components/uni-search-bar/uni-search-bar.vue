@@ -128,7 +128,8 @@
 		flex-direction: row;
 		position: relative;
 		padding: $uni-spacing-col-base;
-		background-color: $uni-bg-color;
+		background-color: #c9c8ce;
+
 	}
 
 	.uni-searchbar__box {
@@ -182,6 +183,6 @@
 		padding-left: 10px;
 		line-height: $uni-searchbar-height;
 		font-size: 14px;
-		color: $uni-text-color;
+		color: #007AFF;
 	}
 </style>

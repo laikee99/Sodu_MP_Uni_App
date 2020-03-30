@@ -34,17 +34,12 @@
 		},
 		methods: {
 			handleItemClick() {
-				if (this.isEdit) {
-					this.book.isSelected = !this.book.isSelected
-				} else {
-					console.log('========')
-					let url = '../../pages/sodu_update_sites/sodu_update_sites'
-					uni.navigateTo({
-						url: url,
-						animationType: 'pop-in',
-						animationDuration: 200
-					})
-				}
+				let url = '../../pages/content_page/content_page'
+				uni.navigateTo({
+					url: url,
+					animationType: 'pop-in',
+					animationDuration: 200
+				})
 			}
 		}
 	}

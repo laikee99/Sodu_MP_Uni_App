@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "排行榜",
-  "navigationBarBackgroundColor": "#0387FE",
-  "navigationBarTextStyle": "white",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "book-item": "/components/BookItem/BookItem"
-  }
-}

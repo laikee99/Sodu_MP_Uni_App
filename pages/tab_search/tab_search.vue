@@ -1,33 +1,40 @@
 <template>
 	<view class="tab-search-container">
 		<view class="search-container">
-			<uniSearchBar bgColor="#eeeeee" radius='6' @confirm="handleSearch" @clear="handleClear" />
+			<uniSearchBar bgColor="#ffffff" radius='6' @confirm="handleSearch" @clear="handleClear" />
 		</view>
-		<BookItem v-for="(item) in books" :key="item.bookId" :book="item" />
+		<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" />
 	</view>
 </template>
 
 <script>
 	import uniSearchBar from '@/components/uni-search-bar/uni-search-bar.vue'
 	import BookItem from '../../components/BookItem/BookItem.vue'
+	import Popupmenus from '../../components/PopupMenus/index.vue'
 	import {
 		search
 	} from '../../api/sodu.js'
 	export default {
 		components: {
 			uniSearchBar,
-			BookItem
+			BookItem,
+			Popupmenus
 		},
 		data() {
 			return {
 				key: '',
-				books: []
+				books: [],
+				showMenu: false,
+				selectedBook: null
 			};
 		},
 		methods: {
 			async handleSearch(input) {
 				try {
-					uni.showLoading()
+					uni.showLoading({
+						title: '加载中...'
+					})
 					let res = await search(input.value)
 					if (res.code === 0) {
 						this.books = []
@@ -35,18 +42,30 @@
 							this.books = res.result
 						}, 0)
 					} else {
-						uni.showToast({
-							title: res.message
-						})
+						throw new Error(res.message)
 					}
 				} catch (e) {
-					//TODO handle the exception
+					setTimeout(() => {
+						uni.showToast({
+							icon: 'none',
+							title: e.message || '请求数据失败,请重新尝试',
+							duration: 3000
+						});
+					})
 				} finally {
 					uni.hideLoading()
 				}
 			},
 			handleClear() {
 				this.books = []
+			},
+			handleItemLongPress(item) {
+				this.selectedBook = item
+				this.showMenu = true
+			},
+			closeMenu() {
+				this.showMenu = false
+				this.selectedBook = null
 			}
 		}
 	}

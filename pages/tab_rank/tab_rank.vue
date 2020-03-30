@@ -1,6 +1,12 @@
 <template>
 	<view class="tab-rank">
-		<BookItem v-for="(item) in books" :key="item.bookId" :book="item" />
+		<view v-if="books && books.length > 0">
+			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+		</view>
+		<view v-else class="empty">
+			暂无数据
+		</view>
+		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" />
 	</view>
 </template>
 
@@ -9,14 +15,18 @@
 		getRanks
 	} from '../../api/sodu.js'
 	import BookItem from '../../components/BookItem/BookItem.vue'
+	import Popupmenus from '../../components/PopupMenus/index.vue'
 	export default {
 		components: {
-			BookItem
+			BookItem,
+			Popupmenus
 		},
 		data() {
 			return {
 				books: [],
-				page: -1
+				page: -1,
+				showMenu: false,
+				selectedBook: null
 			};
 		},
 		watch: {
@@ -43,26 +53,45 @@
 					return
 				}
 				try {
-					uni.showLoading()
+					uni.showLoading({
+						title: '加载中...'
+					})
 					let res = await getRanks(page)
 					if (res.code === 0) {
 						this.books = isRefresh ? res.result : this.books.concat(res.result)
 						this.page = page
 					} else {
-						uni.showToast({
-							title: res.message
-						})
+						throw new Error(res.message)
 					}
 				} catch (e) {
-					//TODO handle the exception
+					setTimeout(() => {
+						uni.showToast({
+							icon: 'none',
+							title: e.message || '请求数据失败,请重新尝试',
+							duration: 3000
+						});
+					})
 				} finally {
 					uni.hideLoading()
 				}
+			},
+			handleItemLongPress(item) {
+				this.selectedBook = item
+				this.showMenu = true
+			},
+			closeMenu() {
+				this.showMenu = false
+				this.selectedBook = null
 			}
 		}
 	}
 </script>
 
 <style lang="less">
-	.tab-rank {}
+	.empty {
+		margin-top: 40%;
+		font-weight: 34upx;
+		color: #808080;
+		text-align: center;
+	}
 </style>

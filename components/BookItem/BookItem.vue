@@ -1,5 +1,5 @@
 <template>
-	<view class="book-item-container" @click="handleItemClick">
+	<view class="book-item-container" @click="handleItemClick" @longpress="handLongPress">
 		<view v-if="book && book.isEdit" class="checkbox-container">
 			<checkbox :checked="book.isSelected" style="transform:scale(0.75)" /><text></text>
 		</view>
@@ -9,17 +9,19 @@
 					<text class="name">
 						{{book.name}}
 					</text>
-					<view v-if="book.hasNew" class="new"/>
+					<view v-if="book.hasNew" class="new" />
+					<view v-if="book.isLoading" class="loading">
+						<image src="../../static/images/other/tail-spin.svg" mode="scaleToFill"></image>
+					</view>
 				</view>
-
 				<text class="time">
 					{{book.updateTime}}
 				</text>
 			</view>
-
 			<view class="bottom">
 				{{book.chapterName}}
 			</view>
+
 		</view>
 	</view>
 </template>
@@ -37,19 +39,21 @@
 
 			};
 		},
-		methods:{
+		methods: {
 			handleItemClick() {
-				if(this.isEdit) {
+				if (this.isEdit) {
 					this.book.isSelected = !this.book.isSelected
 				} else {
-					console.log('========')
 					let url = '../../pages/sodu_update_sites/sodu_update_sites'
 					uni.navigateTo({
-						url: url,
+						url: url + `?book=${JSON.stringify(this.book)}`,
 						animationType: 'pop-in',
 						animationDuration: 200
 					})
 				}
+			},
+			handLongPress() {
+				this.$emit('itemLongPress', this.book)
 			}
 		}
 	}
@@ -114,6 +118,17 @@
 					background-size: 100% 100%;
 					margin-left: 15upx;
 				}
+
+				.loading {
+					height: 35upx;
+					width: 40upx;
+					margin-left: 10upx;
+
+					image {
+						height: 35upx;
+						width: 35upx;
+					}
+				}
 			}
 
 			.bottom {
@@ -144,5 +159,7 @@
 			-webkit-transform: scaleY(0.5);
 			transform: scaleY(0.5);
 		}
+
+
 	}
 </style>

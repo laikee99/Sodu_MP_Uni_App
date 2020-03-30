@@ -1,11 +1,19 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/sodu_update_sites/sodu_update_sites",
+			"path": "pages/tab_setting/tab_setting",
 			"style": {
-				"navigationBarTitleText": "",
-				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "设置",
 				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/tab_shelf/tab_shelf",
+			"style": {
+				"navigationBarTitleText": "个人书架",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -36,16 +44,27 @@
 			}
 		},
 
+
 		{
-			"path": "pages/tab_shelf/tab_shelf",
+			"path": "pages/sodu_update_sites/sodu_update_sites",
 			"style": {
-				"navigationBarTitleText": "个人书架"
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#0387FE",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/tab_setting/tab_setting",
+			"path": "pages/content_page/content_page",
 			"style": {
-				"navigationBarTitleText": "设置"
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/sync_shelf/sync_shelf",
+			"style": {
+				"navigationBarTitleText": "同步设置",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
 			}
 		}
 	],
@@ -54,42 +73,42 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"selectedColor": "#007aff",
+		"color": "#a9b7b7",
+		"borderStyle": "black",
+		"backgroundColor": "#F7F7FA",
+		"list": [{
+				"pagePath": "pages/tab_shelf/tab_shelf",
+				"text": "书架",
+				"iconPath": "static/images/tabbar/tabbar_local_shelf.png",
+				"selectedIconPath": "static/images/tabbar/tabbar_local_shelf_selected.png"
+			},
+			{
+				"pagePath": "pages/tab_rank/tab_rank",
+				"text": "排行",
+				"iconPath": "static/images/tabbar/tabbar_rank.png",
+				"selectedIconPath": "static/images/tabbar/tabbar_rank_selected.png"
+			},
+			{
+				"pagePath": "pages/tab_update/tab_update",
+				"text": "最近更新",
+				"iconPath": "static/images/tabbar/tabbar_update.png",
+				"selectedIconPath": "static/images/tabbar/tabbar_update_selected.png"
+			},
+			{
+				"pagePath": "pages/tab_search/tab_search",
+				"text": "搜索",
+				"iconPath": "static/images/tabbar/tabbar_search.png",
+				"selectedIconPath": "static/images/tabbar/tabbar_search_selected.png"
+			},
+			{
+				"pagePath": "pages/tab_setting/tab_setting",
+				"text": "设置",
+				"iconPath": "static/images/tabbar/tabbar_setting.png",
+				"selectedIconPath": "static/images/tabbar/tabbar_setting_selected.png"
+			}
+		]
 	}
-	// "tabBar": {
-	// 	"selectedColor": "#007aff",
-	// 	"color": "#a9b7b7",
-	// 	"borderStyle": "black",
-	// 	"backgroundColor": "#F7F7FA",
-	// 	"list": [{
-	// 			"pagePath": "pages/tab_shelf/tab_shelf",
-	// 			"text": "书架",
-	// 			"iconPath": "static/images/tabbar/tabbar_local_shelf.png",
-	// 			"selectedIconPath": "static/images/tabbar/tabbar_local_shelf_selected.png"
-	// 		},
-	// 		{
-	// 			"pagePath": "pages/tab_rank/tab_rank",
-	// 			"text": "排行",
-	// 			"iconPath": "static/images/tabbar/tabbar_rank.png",
-	// 			"selectedIconPath": "static/images/tabbar/tabbar_rank_selected.png"
-	// 		},
-	// 		{
-	// 			"pagePath": "pages/tab_update/tab_update",
-	// 			"text": "最近更新",
-	// 			"iconPath": "static/images/tabbar/tabbar_update.png",
-	// 			"selectedIconPath": "static/images/tabbar/tabbar_update_selected.png"
-	// 		},
-	// 		{
-	// 			"pagePath": "pages/tab_search/tab_search",
-	// 			"text": "搜索",
-	// 			"iconPath": "static/images/tabbar/tabbar_search.png",
-	// 			"selectedIconPath": "static/images/tabbar/tabbar_search_selected.png"
-	// 		},
-	// 		{
-	// 			"pagePath": "pages/tab_setting/tab_setting",
-	// 			"text": "设置",
-	// 			"iconPath": "static/images/tabbar/tabbar_setting.png",
-	// 			"selectedIconPath": "static/images/tabbar/tabbar_setting_selected.png"
-	// 		}
-	// 	]
-	// }
 }

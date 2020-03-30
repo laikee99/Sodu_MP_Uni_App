@@ -1,6 +1,6 @@
 <template>
 	<view class="tab-rank">
-		<BookItem v-for="(item,index) in books" :key="index" :book="item" />
+		<BookItem v-for="(item,index) in books" :key="index" :book="item"/>
 	</view>
 </template>
 
@@ -40,15 +40,10 @@
 			})
 		},
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
-			// this.book = JSON.parse(option.book)
-			this.book = {
-				"bookId": "711501",
-				"name": "衣手遮天",
-				"chapterName": "第五三一章 大戏",
-				"updateTime": "2020/03/28 11:32",
-				"sourceUrl": "",
-				"soduUpdatePageUrl": "https://www.sodu2020.com/mulu_711501.html"
-			}
+			this.book = JSON.parse(option.book)
+			uni.setNavigationBarTitle({
+				title: `${this.book.name}`
+			})
 		},
 		methods: {
 			async initBooks(page = 1, isRefresh = false) {
@@ -56,7 +51,9 @@
 					return
 				}
 				try {
-					uni.showLoading()
+					uni.showLoading({
+						title: '加载中...'
+					})
 					let res = await getUpdateSites(this.book.soduUpdatePageUrl, this.book.bookId, page)
 					if (res.code === 0) {
 						this.books = isRefresh ? res.result.books : this.books.concat(res.result.books)

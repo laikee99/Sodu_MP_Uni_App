@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "搜索",
-  "navigationBarBackgroundColor": "#0387FE",
-  "navigationBarTextStyle": "white",
-  "usingComponents": {
-    "book-item": "/components/BookItem/BookItem",
-    "uni-search-bar": "/components/uni-search-bar/uni-search-bar"
-  }
-}
