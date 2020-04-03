@@ -61,8 +61,6 @@
 				this.scrollTop = 0
 			},
 			handleScroll(e) {
-				// console.log(e)
-				// console.log(this.scrollTop, '=========')
 				this.scrollTop = e.detail.scrollTop
 			}
 		}
