@@ -20,6 +20,9 @@
 </template>
 
 <script>
+	import {
+		encodeUTF8
+	} from '../../utils/encode.js'
 	export default {
 		props: {
 			book: {
@@ -34,11 +37,10 @@
 		},
 		methods: {
 			handleItemClick() {
-				let url = '../../pages/content_page/content_page'
 				uni.navigateTo({
-					url: url,
-					animationType: 'pop-in',
-					animationDuration: 200
+					url: '../content_page/content_page?book=' + encodeUTF8(JSON.stringify(this.book)),
+					animationDuration: 200,
+					animationType: 'slide-in-bottom'
 				})
 			}
 		}

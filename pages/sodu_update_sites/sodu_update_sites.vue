@@ -1,6 +1,6 @@
 <template>
 	<view class="tab-rank">
-		<BookItem v-for="(item,index) in books" :key="index" :book="item"/>
+		<BookItem v-for="(item,index) in books" :key="index" :book="item" />
 	</view>
 </template>
 
@@ -8,6 +8,9 @@
 	import {
 		getUpdateSites
 	} from '../../api/sodu.js'
+	import {
+		decodeUTF8
+	} from '../../utils/encode.js'
 	import BookItem from '../../components/UpdateSiteItem/UpdateSiteItem.vue'
 	export default {
 		components: {
@@ -39,8 +42,8 @@
 				uni.stopPullDownRefresh()
 			})
 		},
-		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
-			this.book = JSON.parse(option.book)
+		onLoad: function(option) {
+			this.book = JSON.parse(decodeUTF8(option.book))
 			uni.setNavigationBarTitle({
 				title: `${this.book.name}`
 			})
@@ -59,6 +62,7 @@
 						this.books = isRefresh ? res.result.books : this.books.concat(res.result.books)
 						this.totalPage = res.result.totalPage
 						this.page = parseInt(res.result.currentPage)
+						this.books.forEach(e => e.name = this.book.name)
 					} else {
 						uni.showToast({
 							title: res.message

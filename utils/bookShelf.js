@@ -18,7 +18,7 @@ export function addToShelf(book, cb) {
 
 export function saveBooks(books, cb) {
 	uni.setStorage({
-		key: 'BOOK_SHELF_LIST',
+		key: key,
 		data: books,
 		success: function() {
 			cb && cb()

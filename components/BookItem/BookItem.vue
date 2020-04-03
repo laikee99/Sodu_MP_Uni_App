@@ -1,8 +1,5 @@
 <template>
 	<view class="book-item-container" @click="handleItemClick" @longpress="handLongPress">
-		<view v-if="book && book.isEdit" class="checkbox-container">
-			<checkbox :checked="book.isSelected" style="transform:scale(0.75)" /><text></text>
-		</view>
 		<view class="main-container">
 			<view class="top">
 				<view class="name-contaienr">
@@ -27,6 +24,9 @@
 </template>
 
 <script>
+	import {
+		encodeUTF8
+	} from '../../utils/encode.js'
 	export default {
 		props: {
 			book: {
@@ -39,18 +39,16 @@
 
 			};
 		},
+		created() {},
 		methods: {
 			handleItemClick() {
-				if (this.isEdit) {
-					this.book.isSelected = !this.book.isSelected
-				} else {
-					let url = '../../pages/sodu_update_sites/sodu_update_sites'
-					uni.navigateTo({
-						url: url + `?book=${JSON.stringify(this.book)}`,
-						animationType: 'pop-in',
-						animationDuration: 200
-					})
-				}
+				let url = '../../pages/sodu_update_sites/sodu_update_sites'
+				uni.navigateTo({
+					url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
+					animationType: 'pop-in',
+					animationDuration: 200
+				})
+
 			},
 			handLongPress() {
 				this.$emit('itemLongPress', this.book)
@@ -69,10 +67,6 @@
 		padding: 20upx 20upx 0upx 20upx;
 		align-items: center;
 		box-sizing: border-box;
-
-		.checkbox-container {
-			width: 80upx;
-		}
 
 		.main-container {
 			flex: 1;

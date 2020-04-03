@@ -3,13 +3,14 @@
 		<uni-status-bar v-if="insertStatusBar"></uni-status-bar>
 		<view class="uni-navbar-header" :style="{color:color}">
 			<view class="uni-navbar-header-btns left-container">
-				<view class="icon-container" @tap="goBack">
+				<view class="icon-container" @tap="handleBackClick">
 					<uni-icon type="back" :color="leftColor" size="22"></uni-icon>
 				</view>
 				<view class="icon-split"></view>
 				<view class="icon-container" @tap="goHome">
 					<uni-icon type="home-filled" :color="leftColor" size="22"></uni-icon>
 				</view>
+				<slot name="left"></slot>
 			</view>
 
 			<view class="uni-navbar-container">
@@ -61,6 +62,13 @@
 				default: ''
 			},
 			/**
+			 * 左侧按钮图标
+			 */
+			leftIcon: {
+				type: [Array, String],
+				default: () => ['back', 'home-filled']
+			},
+			/**
 			 * 右侧按钮图标
 			 */
 			rightIcon: {
@@ -102,19 +110,24 @@
 				type: [Boolean, String],
 				default: ''
 			},
+			customBack:{
+				type: [Boolean],
+				default: false
+			},
 			/**
 			 * 是否使用阴影，默认根据背景色判断
 			 */
 			shadow: {
 				type: String,
 				default: ''
+			},
+			leftClick: {
+				type: Object,
+				default: undefined
 			}
 		},
 		data() {
-			return {
-				localLeftText: '',
-				localLeftIcon: ''
-			}
+			return {}
 		},
 		computed: {
 			isFixed() {
@@ -142,32 +155,20 @@
 				}
 			}
 		},
-		watch: {
-			leftText(newVal) {
-				this.localLeftText = newVal
-			},
-			leftIcon(newVal) {
-				this.localLeftIcon = newVal
-			}
-		},
 		mounted() {},
 		methods: {
-			goBack() {
-				uni.navigateBack()
+			handleBackClick() {
+				if (this.customBack) {
+					this.$emit('back')
+				} else {
+					uni.navigateBack()
+				}
 			},
 			goHome() {
-				console.log('回到首页')
 				uni.reLaunch({
 					url: '../../pages/tab_shelf/tab_shelf',
 					animationType: 'pop-in'
 				})
-			},
-			/**
-			 * 右侧按钮点击事件
-			 */
-			onClickRight() {
-				this.$emit('clickRight')
-				this.$emit('click-right')
 			}
 		}
 	}
@@ -181,20 +182,16 @@
 		overflow: hidden;
 	}
 
-	.uni-navbar view {
-		line-height: 44px;
-	}
-
 	.left-container {
 		border: 1px solid #e5e5e5;
 		border-radius: 16px;
 		height: 60upx;
-		height: 30px;
+		line-height: 60upx;
 		margin-left: 8px;
 		width: 87px !important;
 		display: flex;
 		align-items: center;
-		background-color: rgba(255, 255, 255, 0.6);
+		background: rgba(255, 255, 255, 0.6);
 	}
 
 	.single-icon-container {
@@ -205,6 +202,7 @@
 		flex: 1;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 	}
 
 	.icon-split {

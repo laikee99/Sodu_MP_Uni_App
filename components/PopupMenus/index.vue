@@ -3,7 +3,7 @@
 		<view class="menu-item book-name" @click.stop="stopPop">
 			{{book.name}}
 		</view>
-		<view v-if="book && isShelf" class="menu-item" @click.stop="handleRefresh">
+		<view v-if="book && isShelf && book.sourceUrl" class="menu-item" @click.stop="handleRefresh">
 			检查更新
 		</view>
 		<view v-if="book && !isShelf" class="menu-item" @click.stop="handleAddToShelf">

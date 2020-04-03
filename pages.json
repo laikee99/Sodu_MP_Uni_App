@@ -1,6 +1,20 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/content_page/content_page",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/tab_rank/tab_rank",
+			"style": {
+				"navigationBarTitleText": "排行榜",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		}, {
 			"path": "pages/tab_setting/tab_setting",
 			"style": {
 				"navigationBarTitleText": "设置",
@@ -17,15 +31,7 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		{
-			"path": "pages/tab_rank/tab_rank",
-			"style": {
-				"navigationBarTitleText": "排行榜",
-				"navigationBarBackgroundColor": "#0387FE",
-				"navigationBarTextStyle": "white",
-				"enablePullDownRefresh": true
-			}
-		},
+
 		{
 			"path": "pages/tab_search/tab_search",
 			"style": {
@@ -55,11 +61,6 @@
 			}
 		},
 		{
-			"path": "pages/content_page/content_page",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}, {
 			"path": "pages/sync_shelf/sync_shelf",
 			"style": {
 				"navigationBarTitleText": "同步设置",
@@ -67,6 +68,7 @@
 				"navigationBarTextStyle": "white"
 			}
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
