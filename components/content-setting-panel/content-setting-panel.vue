@@ -1,7 +1,15 @@
 <template>
 	<view class="content-setting" @click="closePanel">
 		<view class="add-btn" v-if="!isExistShelf" :class="{'showAddBtn' : show,'hideAddBtn': !show}" @click.stop="handleAddToShelf">
-			加入书架</view>
+			加入书架
+		</view>
+
+		<view class="reload-btn" :class="{'showReloadBtn' : show,'hideReloadBtn': !show}" @click.stop="handleReload">
+			<uni-icons color="#e6e6e6" class="" size="20" type="reload" />
+			<view class="desc">
+				重新加载
+			</view>
+		</view>
 		<view class="setting-item-container" @click.stop="stopPorp" :class="{'showPanel' : show,'hidePanel': !show}">
 			<view class="item">
 				<view class="label"> 字体： </view>
@@ -65,19 +73,20 @@
 		saveConfig
 	} from '../../utils/config.js'
 
-	import {
-		getShelfBooks
-	} from '../../utils/bookShelf.js'
+
 	export default {
 		props: {
 			book: {
 				type: Object,
 				default: null
+			},
+			isExistShelf: { //是否已在书架中 默认是在
+				type: Boolean,
+				default: true
 			}
 		},
 		data() {
 			return {
-				isExistShelf: true, //是否已在书架中 默认是在
 				show: true,
 				light: 100,
 				colors: constColors,
@@ -110,7 +119,6 @@
 		},
 		created() {
 			this.initData()
-			this.checkBookStatus()
 		},
 		methods: {
 			stopPorp(e) {
@@ -125,16 +133,6 @@
 					}
 				})
 				this.config = getConfig()
-			},
-			// 检查是否已经在书架中
-			checkBookStatus() {
-				if (!this.book) {
-					return
-				}
-				getShelfBooks((books) => {
-					let index = books.findIndex(e => e.bookId === this.book.bookId)
-					this.isExistShelf = index === -1 ? false : true
-				})
 			},
 			// 关闭面板
 			closePanel() {
@@ -174,11 +172,19 @@
 			},
 			// 加入书架
 			handleAddToShelf() {
-				uni.$emit('addBookToShelf', this.book)
-				this.isExistShelf = true
+				let book = Object.assign({}, this.book, {
+					lastChapterName: this.book.chapterName,
+					lastChapterUrl: this.book.sourceUrl
+				})
+				uni.$emit('addBookToShelf', book)
+				this.$emit('addBookToShelf', this.book)
 			},
 			handleSwitchAction(key) {
 				this.$emit('switchAction', key)
+			},
+			handleReload() {
+				this.$emit('reload')
+				this.closePanel()
 			}
 		}
 	}
@@ -210,6 +216,28 @@
 			text-align: center;
 			padding-left: 15upx;
 			// transform: translate3d(100%, 0, 0);
+		}
+
+		.reload-btn {
+			background: rgba(25, 25, 25, 0.95);
+			height: 80upx;
+			width: 160upx;
+			position: absolute;
+			bottom: 800upx;
+			left: 0;
+			background: rgba(25, 25, 25, 0.95);
+			z-index: 99;
+			border-radius: 0 38upx 38upx 0;
+			font-size: 28upx;
+			color: #e6e6e6;
+			line-height: 80upx;
+			text-align: center;
+			padding-right: 15upx;
+			// transform: translate3d(100%, 0, 0);
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+
 		}
 
 		.setting-item-container {
@@ -400,6 +428,35 @@
 
 		to {
 			transform: translate3d(100%, 0, 0);
+		}
+	}
+
+
+	.showReloadBtn {
+		animation: showReloadBtn 300ms forwards;
+	}
+
+	.hideReloadBtn {
+		animation: hideReloadBtn 300ms forwards;
+	}
+
+	@keyframes showReloadBtn {
+		from {
+			transform: translate3d(-100%, 0, 0);
+		}
+
+		to {
+			transform: translate3d(0, 0, 0);
+		}
+	}
+
+	@keyframes hideReloadBtn {
+		from {
+			transform: translate3d(0, 0, 0);
+		}
+
+		to {
+			transform: translate3d(-100%, 0, 0);
 		}
 	}
 </style>

@@ -53,6 +53,8 @@
 				scrollTop: 0
 			};
 		},
+		mounted() {
+		},
 		methods: {
 			handleSwitchAction(key) {
 				this.$emit('switchAction', key)
@@ -61,7 +63,13 @@
 				this.scrollTop = 0
 			},
 			handleScroll(e) {
-				this.scrollTop = e.detail.scrollTop
+				this.debounceScroll(e)
+			},
+			debounceScroll(e) {
+				clearTimeout(this.timerId)
+				this.timerId = setTimeout(() => {
+					this.scrollTop = e.detail.scrollTop
+				}, 1000)
 			}
 		}
 	}
@@ -100,6 +108,7 @@
 			margin-top: -70upx;
 			z-index: 2;
 			position: relative;
+			margin-bottom: 20px;
 
 			.btn {
 				height: 60upx;

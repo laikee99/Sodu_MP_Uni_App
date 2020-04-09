@@ -1,25 +1,19 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/content_page/content_page",
+			"path": "pages/start_page/start_page",
 			"style": {
-				"navigationStyle": "custom"
+				// "navigationStyle": "custom",
+				"navigationBarTitleText": "小说搜索阅读",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
 			}
 		},
 		{
-			"path": "pages/tab_rank/tab_rank",
+			"path": "pages/home_page/home_page",
 			"style": {
-				"navigationBarTitleText": "排行榜",
-				"navigationBarBackgroundColor": "#0387FE",
-				"navigationBarTextStyle": "white",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
-			}
-		}, {
-			"path": "pages/tab_setting/tab_setting",
-			"style": {
-				"navigationBarTitleText": "设置",
-				"navigationBarBackgroundColor": "#0387FE",
-				"navigationBarTextStyle": "white"
 			}
 		},
 		{
@@ -31,7 +25,23 @@
 				"enablePullDownRefresh": true
 			}
 		},
-
+		{
+			"path": "pages/tab_rank/tab_rank",
+			"style": {
+				"navigationBarTitleText": "排行榜",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/tab_setting/tab_setting",
+			"style": {
+				"navigationBarTitleText": "设置",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
+			}
+		},
 		{
 			"path": "pages/tab_search/tab_search",
 			"style": {
@@ -49,8 +59,6 @@
 				"enablePullDownRefresh": true
 			}
 		},
-
-
 		{
 			"path": "pages/sodu_update_sites/sodu_update_sites",
 			"style": {
@@ -67,8 +75,31 @@
 				"navigationBarBackgroundColor": "#0387FE",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/disclaimer_page/disclaimer_page",
+			"style": {
+				"navigationBarTitleText": "免责声明",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
+			}
+		}, {
+			"path": "pages/history_page/history_page",
+			"style": {}
+		},
+		{
+			"path": "pages/content_page/content_page",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/book_info_page/book_info_page",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
-		
+
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

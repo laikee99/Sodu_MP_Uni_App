@@ -12,6 +12,15 @@ export function addToShelf(book, cb) {
 		})
 		return
 	}
+	if (books.length >= 80) {
+		uni.showToast({
+			title: '空间有限，最多只能收藏80本小说',
+			icon: 'none',
+			duration: 2000
+		})
+		return
+	}
+	book.shelfTime = +new Date()
 	books.unshift(book)
 	saveBooks(books, cb)
 }
@@ -43,6 +52,7 @@ export function updateBook(book) {
 		if (books) {
 			let index = books.findIndex(e => e.bookId === book.bookId)
 			if (index > -1) {
+				book.shelfTime = +new Date()
 				books[index] = book
 				saveBooks(books)
 			}
@@ -61,8 +71,25 @@ export function getShelfBooksSync() {
 	} catch (e) {
 		result = null
 	}
-
 	return result
+}
+
+
+export function getShelfBooksById(id, cb) {
+	try {
+		getShelfBooks((books) => {
+			if (!books || books.length === 0) {
+				cb()
+			}
+			let index = books.findIndex(e => e.id === id)
+			if (index === -1) {
+				cb()
+			}
+			cb(books[index])
+		})
+	} catch (e) {
+		cb()
+	}
 }
 
 // 异步

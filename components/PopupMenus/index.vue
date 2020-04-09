@@ -3,20 +3,13 @@
 		<view class="menu-item book-name" @click.stop="stopPop">
 			{{book.name}}
 		</view>
-		<view v-if="book && isShelf && book.sourceUrl" class="menu-item" @click.stop="handleRefresh">
+		<view v-if="book && book.sourceUrl" class="menu-item" @click.stop="handleRefresh">
 			检查更新
 		</view>
-		<view v-if="book && !isShelf" class="menu-item" @click.stop="handleAddToShelf">
-			添加至书架
+		<view v-if="book && book.soduUpdatePageUrl" class="menu-item" @click.stop="handleViewUpdateSites">
+			查看更新站点
 		</view>
-		<view v-if="book && isShelf && book.soduUpdatePageUrl" class="menu-item" @click.stop="handleViewUpdateSites">
-			跳转更新列表
-		</view>
-		<view v-if="book && isShelf" class="menu-item" @click.stop="stopPop">
-			下次直接进入阅读页面
-			<switch :checked="book.isDirectGoToContent" @change="handleSwithDirect" style="transform:scale(0.65)" color="#0387FE" />
-		</view>
-		<view v-if="book && isShelf" class="menu-item delete" @click.stop="handleDeleteBook">
+		<view v-if="book" class="menu-item delete" @click.stop="handleDeleteBook">
 			从书架中移除
 		</view>
 	</view>
@@ -57,12 +50,6 @@
 			// 关闭按钮
 			hiddenMenus() {
 				this.$emit('closeMenu')
-			},
-			handleSwithDirect(value) {
-				this.$emit('switchDirectAction', {
-					id: this.book.bookId,
-					value: value.detail.value
-				})
 			},
 			handleDeleteBook() {
 				this.$emit('deleteBook', this.book.bookId)

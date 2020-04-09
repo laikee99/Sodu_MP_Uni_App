@@ -2,7 +2,7 @@
 	<view class="uni-navbar" :class="{'uni-navbar-fixed':isFixed,'uni-navbar-shadow':hasShadow}" :style="{'background-color':backgroundColor}">
 		<uni-status-bar v-if="insertStatusBar"></uni-status-bar>
 		<view class="uni-navbar-header" :style="{color:color}">
-			<view class="uni-navbar-header-btns left-container">
+			<view :class="{'hide-left' : !showLeft}" class="uni-navbar-header-btns left-container">
 				<view class="icon-container" @tap="handleBackClick">
 					<uni-icon type="back" :color="leftColor" size="22"></uni-icon>
 				</view>
@@ -10,7 +10,6 @@
 				<view class="icon-container" @tap="goHome">
 					<uni-icon type="home-filled" :color="leftColor" size="22"></uni-icon>
 				</view>
-				<slot name="left"></slot>
 			</view>
 
 			<view class="uni-navbar-container">
@@ -110,8 +109,12 @@
 				type: [Boolean, String],
 				default: ''
 			},
-			customBack:{
+			customBack: {
 				type: [Boolean],
+				default: false
+			},
+			showLeft: {
+				type: Boolean,
 				default: false
 			},
 			/**
@@ -165,8 +168,8 @@
 				}
 			},
 			goHome() {
-				uni.reLaunch({
-					url: '../../pages/tab_shelf/tab_shelf',
+				uni.redirectTo({
+					url: '../../pages/home_page/home_page',
 					animationType: 'pop-in'
 				})
 			}
@@ -192,6 +195,10 @@
 		display: flex;
 		align-items: center;
 		background: rgba(255, 255, 255, 0.6);
+	}
+
+	.hide-left {
+		visibility: hidden !important;
 	}
 
 	.single-icon-container {
@@ -222,6 +229,8 @@
 	.uni-navbar.uni-navbar-fixed {
 		position: fixed;
 		z-index: 998;
+		top: 0;
+		left: 0;
 	}
 
 	.uni-navbar-header {

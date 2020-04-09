@@ -1,23 +1,31 @@
 <template>
 	<view>
-		<view class="root" :style="contentStyle">
+		<view class="root" :style="contentStyle" @click="handleSettingClick">
 			<view class="nav-bar-container">
-				<uniNavBar :title=" book.name" :backgroundColor="config.bgColor" shadow="false"></uniNavBar>
+				<uniNavBar :backgroundColor="config.bgColor" shadow="false">
+					<view class="title-container">
+						<view class="book-name">
+							{{book.name}}
+						</view>
+						<view class="catalog-name">
+							{{currentCatalog ? currentCatalog.name : ''}}
+						</view>
+					</view>
+				</uniNavBar>
 			</view>
-			<view class="outer" :style="{'height': `calc(100vh - ${navBarHeight}px - 35px)`}" @click="handleSettingClick">
+			<view class="outer">
 				<view class="inner">
-					<scrollContent :book="book" :content="currentCatalog.content" :height="`calc(100vh - ${navBarHeight}px - 35px)`"
+					<scrollContent :book="book" :content="currentCatalog.content" :height="`calc(100vh - ${navBarHeight}px - 20px)`"
 					 @switchAction="handleSwitchAction"></scrollContent>
 				</view>
 			</view>
 			<view class="bottom">
-				{{currentCatalog ? currentCatalog.name : ''}}
 			</view>
-			<Setting v-if="showSettingPanel" :book="book" @close="handleCloseSettingPanel" @updateConfig="handleUpdateConfig"
-			 @switchAction="handleSwitchAction" />
+			<Setting v-if="showSettingPanel" :isExistShelf="isExistShelf" :book="book" @close="handleCloseSettingPanel"
+			 @updateConfig="handleUpdateConfig" @switchAction="handleSwitchAction" @addBookToShelf="checkBookStatus" @reload="handleReload" />
 
 		</view>
-		<Bookinfo v-if="showBookInfoPanel" :info="bookInfo" :book="book" :style="contentStyle" @close="handleSwitchCatalog" />
+		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
 	</view>
 </template>
 
@@ -25,7 +33,7 @@
 	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
 	import scrollContent from '../../components/scroll-content/scroll-content.vue'
 	import Setting from '../../components/content-setting-panel/content-setting-panel.vue'
-	import Bookinfo from '../../components/book-info-panel/book-info-panel.vue'
+	import wLoading from '@/components/w-loading/w-loading.vue';
 	import {
 		getContent,
 		getBookInfo
@@ -38,12 +46,16 @@
 		decodeUTF8,
 		encodeUTF8
 	} from '../../utils/encode.js'
+	import {
+		getShelfBooks,
+		getShelfBooksById
+	} from '../../utils/bookShelf.js'
 	export default {
 		components: {
 			uniNavBar,
 			Setting,
 			scrollContent,
-			Bookinfo
+			wLoading
 		},
 		data() {
 			return {
@@ -57,7 +69,8 @@
 				config: null,
 				currentCatalog: null,
 				bookInfo: null,
-				showBookInfoPanel: false
+				showBookInfoPanel: false,
+				isExistShelf: true
 			};
 		},
 		computed: {
@@ -75,6 +88,7 @@
 			this.config = getConfig()
 		},
 		onLoad(option) {
+			uni.$on('navigateToCatalog', this.handleSwitchCatalog)
 			if (option.book) {
 				this.book = JSON.parse(decodeUTF8(option.book))
 			} else {
@@ -84,7 +98,7 @@
 					lyWeb: "乐安宣书网",
 					name: "绝对一番",
 					soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
-					sourceUrl: "https://www.sqsxs.com/book/292/292915/92041834.html",
+					sourceUrl: "https://www.dhzw8.com/book/424/424571/118145302.html",
 					updateTime: "2020/03/31 06:16"
 				}
 			}
@@ -92,38 +106,61 @@
 				name: this.book.chapterName,
 				url: this.book.sourceUrl,
 				content: ''
-			}, true)
+			})
 			// 请求目录
 			this.requestBookInfo(this.book.sourceUrl)
+			this.checkBookStatus()
+		},
+		onUnload() {
+			uni.$off('navigateToCatalog')
 		},
 		methods: {
-			// 加载当前目录数据
+			// 检查是否已经在书架中
+			checkBookStatus() {
+				if (!this.book) {
+					return
+				}
+				getShelfBooks((books) => {
+					let index = books.findIndex(e => e.bookId === this.book.bookId)
+					this.isExistShelf = index === -1 ? false : true
+				})
+			},
+			// 加载当前章节数据
 			async requestCurrentCatalog(item, time = 0) {
-				if (item.content) {
-					this.currentCatalog = item
-				} else {
-					let res = await this.requestContent(item.url, true)
-					if (res) {
-						item.content = res
+				try {
+					if (item.content) {
 						this.currentCatalog = item
+						this.updateBookShelfInfo(item)
 					} else {
-						if (time < 3) {
-							this.requestCurrentCatalog(item, time++)
+						this.isLoading = true
+						let res = await this.requestContent(item.url)
+						if (res) {
+							item.content = res
+							this.currentCatalog = item
+							this.formatCurrentCatalog()
+							this.updateBookShelfInfo(item)
+						} else {
+							throw new Error()
 						}
 					}
-				}
-				if (this.bookInfo) {
-					this.preLoadNextCatalogs()
+				} catch (error) {
+					if (time < 3) {
+						this.requestCurrentCatalog(item, ++time)
+					}
+				} finally {
+					this.isLoading = false
 				}
 			},
-			async requestContent(url, showLoading = false) {
+			updateBookShelfInfo(item) {
+				if (!this.isExistShelf) {
+					return
+				}
+				uni.$emit('updateShelfBookMark', Object.assign({}, item, {
+					id: this.book.bookId
+				}))
+			},
+			async requestContent(url) {
 				try {
-					if (showLoading) {
-						uni.showLoading({
-							title: '加载中...'
-						})
-						this.isLoading = true
-					}
 					let res = await getContent(url)
 					if (res.code === 0) {
 						return res.result
@@ -132,37 +169,51 @@
 					}
 				} catch (e) {
 					return null
-				} finally {
-					if (showLoading) {
-						uni.hideLoading()
-						this.isLoading = false
-					}
 				}
 			},
+			// 加载目录数据
 			async requestBookInfo(url, time = 0) {
 				try {
+					let _this = this
 					this.isRequestBookInfo = true
 					let res = await getBookInfo(url)
 					if (res.code === 0) {
 						this.bookInfo = res.result
-						if (this.currentCatalog.content) {
-							let index = this.bookInfo.catalogs.findIndex(e => e.url === this.currentCatalog.url)
-							if (index > -1) {
-								this.bookInfo.catalogs[index].content = this.currentCatalog.content
-								this.currentCatalog.index = index
-							}
-						}
-						this.preLoadNextCatalogs()
+						this.isRequestBookInfo = false
+						this.formatCurrentCatalog()
+						uni.setStorage({
+							key: _this.book.id + '_book_info',
+							data: res.result
+						})
 					} else {
-						if (time < 3) {
-							this.requestBookInfo(uri, time++)
-						}
+						throw new Error()
 					}
 				} catch (e) {
-					this.bookInfo = null
-				} finally {
-					this.isRequestBookInfo = false
+					if (time < 3) {
+						this.requestBookInfo(url, ++time)
+					} else {
+						this.bookInfo = null
+						this.isRequestBookInfo = false
+						uni.showToast({
+							title: ' 目录加载失败',
+							icon: 'none',
+							duration: 3000
+						})
+					}
 				}
+			},
+			formatCurrentCatalog() {
+				if (!this.bookInfo) {
+					return
+				}
+				if (this.currentCatalog.content) {
+					let index = this.bookInfo.catalogs.findIndex(e => e.url === this.currentCatalog.url)
+					if (index > -1) {
+						this.bookInfo.catalogs[index].content = this.currentCatalog.content
+						this.currentCatalog.index = index
+					}
+				}
+				this.preLoadNextCatalogs()
 			},
 			// 预加载接下来2章内容
 			preLoadNextCatalogs() {
@@ -204,7 +255,7 @@
 				}
 				if (key < 4 && !this.bookInfo) {
 					uni.showToast({
-						title: '暂无章节数据，请稍候',
+						title: this.isRequestBookInfo ? '数据请求中，请稍候' : '无章节数据',
 						icon: 'none',
 						duration: 2000
 					})
@@ -235,7 +286,12 @@
 			},
 			// 打开目录
 			goToBookInfoPage() {
-				this.showBookInfoPanel = true
+				let url = '../../pages/book_info_page/book_info_page'
+				uni.navigateTo({
+					url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
+					animationType: 'pop-in',
+					animationDuration: 200
+				})
 			},
 			// 上一章
 			handlePreChapter() {
@@ -256,13 +312,20 @@
 					this.handleSwitchCatalog(this.bookInfo.catalogs[index + 1])
 				}
 			},
-			//关闭目录
+			//切换章节
 			handleSwitchCatalog(item) {
-				this.showBookInfoPanel = false
 				if (item) {
 					let temp = this.bookInfo.catalogs[item.index]
 					this.requestCurrentCatalog(temp)
 				}
+			},
+			handleReload() {
+				this.requestCurrentCatalog({
+					index: this.currentCatalog.index,
+					url: this.currentCatalog.url,
+					name: this.currentCatalog.name,
+					content: null
+				})
 			}
 		}
 	}
@@ -281,6 +344,44 @@
 		flex-direction: column;
 		z-index: 99;
 
+		.title-container {
+			line-height: 40upx;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			width: 50vw;
+
+			.book-name {
+				flex: 1;
+				font-weight: 600;
+				text-align: center;
+				font-size: 28upx;
+				overflow: hidden;
+				word-break: keep-all;
+				/* 不换行 */
+				white-space: nowrap;
+				/* 不换行 */
+				overflow: hidden;
+				/* 内容超出宽度时隐藏超出部分的内容 */
+				text-overflow: ellipsis;
+			}
+
+			.catalog-name {
+				flex: 1;
+				font-weight: lighter;
+				text-align: center;
+				font-size: 24upx;
+				overflow: hidden;
+				word-break: keep-all;
+				/* 不换行 */
+				white-space: nowrap;
+				/* 不换行 */
+				overflow: hidden;
+				/* 内容超出宽度时隐藏超出部分的内容 */
+				text-overflow: ellipsis;
+			}
+		}
+
 		.outer {
 			flex: 1;
 
@@ -292,7 +393,7 @@
 		.bottom {
 			width: 100vw;
 			background: inherit;
-			height: 35px;
+			height: 20px;
 			font-size: 24upx;
 			display: flex;
 			align-items: center;

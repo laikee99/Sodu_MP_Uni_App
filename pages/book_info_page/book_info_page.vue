@@ -1,9 +1,7 @@
 <template>
-	<view class="book-info-container" :class="[className]">
-		<view class="nav-bar-container">
-			<uniNavBar :title="book.name" :backgroundColor="config.bgColor" shadow="false" :customBack="true" @back="handlBackClick(item)"></uniNavBar>
-		</view>
-		<scroll-view scroll-y style="height: 100upx;padding-bottom: 100upx;" class="list-container" :scroll-top="scrollTop"
+	<view class="book-info-container" :style="contentStyle">
+		<uniNavBar :title="book.name" :backgroundColor="themeValue.bgColor" shadow="false"></uniNavBar>
+		<scroll-view scroll-y style="height: 100upx;padding-bottom: 150upx;" class="list-container" :scroll-top="scrollTop"
 		 @scroll="handleScroll">
 			<view class="book-info">
 				<view class="item name">
@@ -25,7 +23,7 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view class="btn-contaienr">
+		<view class="btn-contaienr" :style="{'background' : themeValue.bgColor}">
 			<view class="btn" @click="goTop">
 				到顶部
 			</view>
@@ -47,19 +45,17 @@
 
 <script>
 	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
+	import {
+		decodeUTF8,
+		encodeUTF8
+	} from '../../utils/encode.js'
+	import {
+		getConfig,
+		colors
+	} from '../../utils/config.js'
 	export default {
 		components: {
 			uniNavBar
-		},
-		props: {
-			info: {
-				type: Object,
-				default: null
-			},
-			book: {
-				type: Object,
-				default: null
-			}
 		},
 		watch: {
 			show(newValue, oldValue) {
@@ -68,25 +64,49 @@
 		},
 		data() {
 			return {
-				navBarHeight: 44 + uni.getSystemInfoSync().statusBarHeight,
-				show: false,
-				className: '',
 				scrollTop: 0,
-				scrollBottom: 0,
-				currentList: [],
+				navBarHeight: 44 + uni.getSystemInfoSync().statusBarHeight,
+				book: null,
+				info: null,
+				config: null,
+				themeValue: null,
 				allList: [],
+				currentList: [],
 				pageIndex: 0
 			};
 		},
-		created() {
-			this.splitCatalogs()
+		computed: {
+			contentStyle() {
+				let themeValue = colors[this.config.theme]
+				let style =
+					`color: ${themeValue.color};` +
+					`background: ${themeValue.bgColor};` +
+					`line-height: ${this.config.lineHeight};` +
+					`font-size: ${this.config.fontSize}px;`
+				return style
+			}
 		},
-		mounted() {
-			setTimeout(() => {
-				this.show = true
-			}, 0)
+		onLoad(option) {
+			if (option.book) {
+				this.book = JSON.parse(decodeUTF8(option.book))
+				this.initInfo()
+			}
+		},
+		created() {
+			this.config = getConfig()
+			this.themeValue = colors[this.config.theme]
 		},
 		methods: {
+			initInfo() {
+				let _this = this
+				uni.getStorage({
+					key: _this.book.id + '_book_info',
+					complete(res) {
+						_this.info = res.data
+						_this.splitCatalogs()
+					}
+				})
+			},
 			splitCatalogs() {
 				if (!this.info || !this.info.catalogs || this.info.catalogs.length === 0) {
 					return
@@ -107,17 +127,11 @@
 
 				this.currentList = this.allList[0]
 			},
-			handlBackClick(item) {
-				this.show = false
-				setTimeout(() => {
-					this.$emit('close', item)
-				}, 300)
-			},
 			handleItemClick(item) {
-				this.handlBackClick(item)
+				uni.$emit('navigateToCatalog', item)
+				uni.navigateBack()
 			},
 			handleScroll(e) {
-				console.log(e)
 				this.debounceScroll(e)
 			},
 			debounceScroll(e) {
@@ -130,7 +144,7 @@
 				this.scrollTop = 0
 			},
 			goBottom() {
-				this.scrollTop = 20000
+				this.scrollTop = 2000000
 			},
 			handleNextPage() {
 				if (this.pageIndex === this.allList.length - 1) {
@@ -168,6 +182,8 @@
 
 <style lang="less">
 	.book-info-container {
+		background: inherit;
+		min-height: 100vh;
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -180,10 +196,11 @@
 		display: flex;
 		flex-direction: column;
 		background: inherit;
-		transform: translateX(100%);
 
 		.list-container {
 			flex: 1;
+			background: inherit;
+			
 
 			.book-info {
 				padding: 20upx;
@@ -262,11 +279,13 @@
 			width: 100vw;
 			bottom: 0;
 			left: 0;
-			height: 100upx;
+			height: 140upx;
 			display: flex;
 			align-items: center;
 			justify-content: space-around;
 			z-index: 999;
+			padding-bottom: 20upx;
+			box-sizing: border-box;
 
 			.btn {
 				line-height: 60upx;
@@ -275,7 +294,7 @@
 				border-radius: 5upx;
 				border: 1px solid #c4c4c4;
 				background-color: rgba(255, 255, 255, 0.8);
-				width: 100upx;
+				min-width: 100upx;
 				text-align: center;
 				padding: 0 10upx;
 				border-radius: 8upx;

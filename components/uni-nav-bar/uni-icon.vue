@@ -45,7 +45,7 @@
 		font-size: 24px;
 		font-weight: normal;
 		font-style: normal;
-		line-height: 1;
+		line-height: 3;
 		display: inline-block;
 		text-decoration: none;
 		-webkit-font-smoothing: antialiased;

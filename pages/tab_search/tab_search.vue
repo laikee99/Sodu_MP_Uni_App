@@ -4,14 +4,14 @@
 			<uniSearchBar bgColor="#ffffff" radius='6' @confirm="handleSearch" @clear="handleClear" />
 		</view>
 		<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
-		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" />
+		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
 	</view>
 </template>
 
 <script>
 	import uniSearchBar from '@/components/uni-search-bar/uni-search-bar.vue'
 	import BookItem from '../../components/BookItem/BookItem.vue'
-	import Popupmenus from '../../components/PopupMenus/index.vue'
+	import wLoading from '@/components/w-loading/w-loading.vue';
 	import {
 		search
 	} from '../../api/sodu.js'
@@ -19,22 +19,22 @@
 		components: {
 			uniSearchBar,
 			BookItem,
-			Popupmenus
+			wLoading
 		},
+
 		data() {
 			return {
 				key: '',
 				books: [],
 				showMenu: false,
-				selectedBook: null
+				selectedBook: null,
+				isLoading: false
 			};
 		},
 		methods: {
 			async handleSearch(input) {
 				try {
-					uni.showLoading({
-						title: '加载中...'
-					})
+					this.isLoading = true
 					let res = await search(input.value)
 					if (res.code === 0) {
 						this.books = []
@@ -54,6 +54,7 @@
 					})
 				} finally {
 					uni.hideLoading()
+					this.isLoading = false
 				}
 			},
 			handleClear() {
@@ -71,18 +72,11 @@
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 	.tab-search-container {
 		position: relative;
-		padding: 110upx 0 0 0;
-
-		.search-container {
-			position: fixed;
-			background: white;
-			left: 0;
-			top: 0;
-			width: 100%;
-			z-index: 99;
-		}
+		padding: 0upx 0 0 0;
+		height: 100%;
+		box-sizing: border-box;
 	}
 </style>

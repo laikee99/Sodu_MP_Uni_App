@@ -16,9 +16,11 @@
 				</text>
 			</view>
 			<view class="bottom">
-				{{book.chapterName}}
+				当前:{{book.chapterName}}
 			</view>
-
+			<view v-if="isShelf" class="bottom">
+				最新:{{book.lastChapterName ? book.lastChapterName : '-'}}
+			</view>
 		</view>
 	</view>
 </template>
@@ -32,6 +34,10 @@
 			book: {
 				type: Object,
 				default: null
+			},
+			isShelf: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data() {
@@ -43,12 +49,18 @@
 		methods: {
 			handleItemClick() {
 				let url = '../../pages/sodu_update_sites/sodu_update_sites'
+				if (this.isShelf && this.book.sourceUrl) {
+					url = '../../pages/content_page/content_page'
+				}
 				uni.navigateTo({
 					url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
 					animationType: 'pop-in',
 					animationDuration: 200
 				})
 
+				if (this.isShelf) {
+					this.$emit('bookClick')
+				}
 			},
 			handLongPress() {
 				this.$emit('itemLongPress', this.book)
@@ -59,24 +71,24 @@
 
 <style lang="less">
 	.book-item-container {
-		height: 150upx;
+		min-height: 150upx;
 		width: 100%;
 		overflow: hidden;
 		position: relative;
 		display: flex;
-		padding: 20upx 20upx 0upx 20upx;
+		padding: 10upx 20upx 0upx 20upx;
 		align-items: center;
 		box-sizing: border-box;
 
 		.main-container {
 			flex: 1;
-			line-height: 40upx;
 			font-size: 26upx;
 			overflow: hidden;
 
 			.top {
 				display: flex;
 				align-items: center;
+				line-height: 60upx;
 
 				.time {
 					width: 240upx;
@@ -127,7 +139,7 @@
 
 			.bottom {
 				color: #888;
-				line-height: 80upx;
+				line-height: 60upx;
 				font-weight: 300;
 				word-break: keep-all;
 				/* 不换行 */

@@ -1,12 +1,12 @@
 <template>
 	<view class="tab-rank">
 		<view v-if="books && books.length > 0">
-			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" />
 		</view>
 		<view v-else class="empty">
 			暂无数据
 		</view>
-		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" />
+		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
 	</view>
 </template>
 
@@ -15,51 +15,68 @@
 		getRanks
 	} from '../../api/sodu.js'
 	import BookItem from '../../components/BookItem/BookItem.vue'
-	import Popupmenus from '../../components/PopupMenus/index.vue'
+	import wLoading from '@/components/w-loading/w-loading.vue';
 	export default {
 		components: {
 			BookItem,
-			Popupmenus
+			wLoading
+		},
+		props: {
+			visiable: {
+				type: Boolean,
+				default: false
+			}
 		},
 		data() {
 			return {
 				books: [],
 				page: -1,
 				showMenu: false,
-				selectedBook: null
+				selectedBook: null,
+				isLoading: false
 			};
 		},
 		watch: {
 			page(newValue, oldValue) {
-				uni.setNavigationBarTitle({
-					title: `排行榜（${this.page}/8）`
-				})
+				if (this.visiable) {
+					uni.setNavigationBarTitle({
+						title: `排行榜（${this.page}/8）`
+					})
+				}
 			}
+		},
+		created() {
+			// 下拉刷新
+			uni.$on('pullDwomRefresh', this.hanleRefresh)
+			//  加载更多
+			uni.$on('loadMore', this.handleLoadMore)
 		},
 		mounted() {
 			this.initBooks(1)
 		},
-		onReachBottom() {
-			this.initBooks(this.page + 1)
-		},
-		onPullDownRefresh() {
-			this.initBooks(1, true).then(() => {
-				uni.stopPullDownRefresh()
-			})
-		},
 		methods: {
-			async initBooks(page = 1, isRefresh = false) {
-				if (page > 8) {
+			hanleRefresh(index) {
+				if (!this.visiable) {
+					return
+				}
+				this.initBooks(1)
+			},
+			handleLoadMore(index) {
+				if (!this.visiable) {
+					return
+				}
+				this.initBooks(this.page + 1)
+			},
+			async initBooks(index = 1, isRefresh = true) {
+				if (index > 8) {
 					return
 				}
 				try {
-					uni.showLoading({
-						title: '加载中...'
-					})
-					let res = await getRanks(page)
+					this.isLoading = true
+					let res = await getRanks(index)
 					if (res.code === 0) {
 						this.books = isRefresh ? res.result : this.books.concat(res.result)
-						this.page = page
+						this.page = index
 					} else {
 						throw new Error(res.message)
 					}
@@ -72,7 +89,7 @@
 						});
 					})
 				} finally {
-					uni.hideLoading()
+					this.isLoading = false
 				}
 			},
 			handleItemLongPress(item) {
@@ -87,11 +104,22 @@
 	}
 </script>
 
-<style lang="less">
-	.empty {
-		margin-top: 40%;
-		font-weight: 34upx;
-		color: #808080;
-		text-align: center;
+<style lang="less" scoped>
+	.tab-rank {
+		position: relative;
+		min-height: 50vh;
+		padding-bottom: 140upx;
+		box-sizing: border-box;
+
+		.empty {
+			position: absolute;
+			width: 100vw;
+			left: 0;
+			top: 40%;
+			font-weight: 34upx;
+			color: #808080;
+			text-align: center;
+		}
+	 
 	}
 </style>

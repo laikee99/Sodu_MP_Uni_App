@@ -1,6 +1,7 @@
 <template>
 	<view class="tab-rank">
 		<BookItem v-for="(item,index) in books" :key="index" :book="item" />
+		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
 	</view>
 </template>
 
@@ -12,16 +13,19 @@
 		decodeUTF8
 	} from '../../utils/encode.js'
 	import BookItem from '../../components/UpdateSiteItem/UpdateSiteItem.vue'
+	import wLoading from '@/components/w-loading/w-loading.vue';
 	export default {
 		components: {
-			BookItem
+			BookItem,
+			wLoading
 		},
 		data() {
 			return {
 				books: [],
 				page: -1,
 				book: null,
-				totalPage: 1
+				totalPage: 1,
+				isLoading: false
 			};
 		},
 		watch: {
@@ -38,9 +42,8 @@
 			this.initBooks(this.page + 1)
 		},
 		onPullDownRefresh() {
-			this.initBooks(1, true).then(() => {
-				uni.stopPullDownRefresh()
-			})
+			this.initBooks(1, true)
+			uni.stopPullDownRefresh()
 		},
 		onLoad: function(option) {
 			this.book = JSON.parse(decodeUTF8(option.book))
@@ -54,9 +57,7 @@
 					return
 				}
 				try {
-					uni.showLoading({
-						title: '加载中...'
-					})
+					this.isLoading = true
 					let res = await getUpdateSites(this.book.soduUpdatePageUrl, this.book.bookId, page)
 					if (res.code === 0) {
 						this.books = isRefresh ? res.result.books : this.books.concat(res.result.books)
@@ -72,7 +73,7 @@
 					console.log(e)
 					//TODO handle the exception
 				} finally {
-					uni.hideLoading()
+					this.isLoading = false
 				}
 			}
 		}

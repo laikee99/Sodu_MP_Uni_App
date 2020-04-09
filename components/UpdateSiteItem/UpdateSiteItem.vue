@@ -96,15 +96,6 @@
 				text-overflow: ellipsis;
 				/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
 			}
-
-			.new {
-				flex-shrink: 0;
-				height: 50upx;
-				width: 60upx;
-				background: url(../../static/images/other/new.png) no-repeat;
-				background-size: 100% 100%;
-				margin-left: 15upx;
-			}
 		}
 
 		.bottom {
