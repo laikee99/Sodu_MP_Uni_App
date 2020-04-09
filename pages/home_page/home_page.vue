@@ -21,12 +21,6 @@
 				<cover-image class="tab-icon" :src="'../../static/images/tabbar/'+ item.image + [tabIndex === item.index ? '_selected':''] + '.png'"></cover-image>
 				<cover-view class="tab-name" :style="{'color' : tabIndex === item.index ? '#007aff':'#9B9B9B'}">{{item.title}}</cover-view>
 			</cover-view>
-
-
-			<!-- <adTabbar>
-				<adTabbarItem v-for="item in tabs" :key="item.index" :name="item.title" :dataCur="item.index" class="maxWidth"
-				 @click="navClick" :textColor="curPage=='page1'? '#007aff':'#9B9B9B'" :icon="'../../static/images/tabbar/'+ item.image + [tabIndex === item.index ? '_selected':''] + '.png'"></adTabbarItem>
-			</adTabbar> -->
 		</cover-view>
 	</view>
 </template>

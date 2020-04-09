@@ -115,7 +115,7 @@
 			},
 			showLeft: {
 				type: Boolean,
-				default: false
+				default: true
 			},
 			/**
 			 * 是否使用阴影，默认根据背景色判断

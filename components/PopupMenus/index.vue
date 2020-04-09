@@ -1,18 +1,24 @@
 <template>
-	<view class="pupup-menus-container" @touchmove.stop.prevent="stopPop" @click.stop="hiddenMenus">
-		<view class="menu-item book-name" @click.stop="stopPop">
+	<cover-view class="pupup-menus-container" @touchmove="stopPop" @click="hiddenMenus">
+		<cover-view class="menu-item book-name" @click="stopPop">
 			{{book.name}}
-		</view>
-		<view v-if="book && book.sourceUrl" class="menu-item" @click.stop="handleRefresh">
+		</cover-view>
+		<cover-view class="split"></cover-view>
+
+		<cover-view class="menu-item" @click="handleRefresh">
 			检查更新
-		</view>
-		<view v-if="book && book.soduUpdatePageUrl" class="menu-item" @click.stop="handleViewUpdateSites">
+		</cover-view>
+		<cover-view class="split"></cover-view>
+
+		<cover-view class="menu-item" @click="handleViewUpdateSites">
 			查看更新站点
-		</view>
-		<view v-if="book" class="menu-item delete" @click.stop="handleDeleteBook">
+		</cover-view>
+		<cover-view class="split"></cover-view>
+
+		<cover-view class="menu-item delete" @click="handleDeleteBook">
 			从书架中移除
-		</view>
-	</view>
+		</cover-view>
+	</cover-view>
 </template>
 
 <script>
@@ -28,7 +34,9 @@
 			},
 		},
 		methods: {
-			stopPop() {},
+			stopPop() {
+				console.log('=========')
+			},
 			// 添加至个人书架
 			handleAddToShelf() {
 				uni.$emit('addBookToShelf', this.book)
@@ -49,6 +57,7 @@
 			},
 			// 关闭按钮
 			hiddenMenus() {
+				console.log('========k')
 				this.$emit('closeMenu')
 			},
 			handleDeleteBook() {
@@ -63,6 +72,7 @@
 		position: fixed;
 		left: 0upx;
 		top: 0upx;
+		bottom: 100px;
 		width: 100%;
 		height: 100%;
 		display: flex;
@@ -70,7 +80,8 @@
 		justify-content: flex-end;
 		text-align: center;
 		background: rgba(0, 0, 0, 0.6);
-		z-index: 100;
+		z-index: 999;
+		padding-bottom: 100px;
 
 		.menu-item {
 			position: relative;
@@ -79,10 +90,9 @@
 			background-color: white;
 			color: #555555;
 			font-weight: 300;
-			display: flex;
-			justify-content: center;
-			align-items: center;
 			font-size: 30upx;
+			line-height: 100upx;
+			text-align: center;
 
 			&.book-name {
 				font-weight: 500;
@@ -92,23 +102,17 @@
 			&.delete {
 				color: #DD524D;
 				font-weight: 500;
+				height: 150upx;
+				font-size: 34upx;
+				line-height: 150upx;
 			}
 
-			&:not(:last-child):before {
-				content: " ";
-				position: absolute;
-				left: 0;
-				bottom: 0;
-				right: 0;
-				height: 1upx;
-				border-bottom: 1upx solid #dbdbdb;
-				-webkit-transform-origin: 0 0;
-				transform-origin: 0 0;
-				-webkit-transform: scaleY(0.5);
-				transform: scaleY(0.5);
-			}
+
 		}
 
-
+		.split {
+			height: 1px;
+			background-color: #dbdbdb;
+		}
 	}
 </style>

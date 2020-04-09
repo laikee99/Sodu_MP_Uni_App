@@ -5,15 +5,12 @@
 		</view>
 		<view class="title">{{text}}</view>
 	</view>
-	<!-- 遮罩层-->
 </template>
 
 <script scoped="true">
-	import loading from '@/components/w-loading/loading5.vue';
 	export default {
 		name: "w-loading",
 		components: {
-			loading
 		},
 		props: {
 			text: String,

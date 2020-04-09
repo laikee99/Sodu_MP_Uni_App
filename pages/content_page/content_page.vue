@@ -70,7 +70,7 @@
 				currentCatalog: null,
 				bookInfo: null,
 				showBookInfoPanel: false,
-				isExistShelf: true
+				isExistShelf: false
 			};
 		},
 		computed: {
