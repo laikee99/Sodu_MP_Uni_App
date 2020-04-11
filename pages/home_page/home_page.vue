@@ -1,27 +1,17 @@
 <template>
-	<view class="home-container" :style="{'padding-top' : navBarHeight + 'px' }">
-		<uniNavBar fixed="true" :showLeft="false" :title="title" backgroundColor="#0387FE" shadow="false" color="white"></uniNavBar>
-		<view class="hide" :class="{'show': tabIndex === 1 }">
-			<TabShelf :visiable="tabIndex === 1" />
+	<view class="home-container">
+		<uniNavBar :showLeft="false" :title="title" backgroundColor="#0387FE" shadow="false" color="white"></uniNavBar>
+		<TabShelf ref="shelf" :class="[tabIndex === 1 ? 'show' : 'hide']" />
+		<TabRank :class="[tabIndex === 2 ? 'show' : 'hide']" />
+		<TabUpdate :class="[tabIndex === 3 ? 'show' : 'hide']" />
+		<TabSearch :class="[tabIndex === 4 ? 'show' : 'hide']" />
+		<TabSetting :class="[tabIndex === 5 ? 'show' : 'hide']" />
+		<view class="cover">
+			<view v-for="item in tabs" :key="item.index" class="tab-item" @click="navClick(item)">
+				<image class="tab-icon" :src="'../../static/images/tabbar/'+ item.image + [tabIndex === item.index ? '_selected':''] + '.png'"></image>
+				<view class="tab-name" :style="{'color' : tabIndex === item.index ? '#007aff':'#9B9B9B'}">{{item.title}}</view>
+			</view>
 		</view>
-		<view class="hide" :class="{'show': tabIndex === 2 }">
-			<TabRank :visiable="tabIndex === 2" />
-		</view>
-		<view class="hide" :class="{'show': tabIndex === 3 }">
-			<TabUpdate :visiable="tabIndex === 3" />
-		</view>
-		<view class="hide" :class="{'show': tabIndex === 4 }">
-			<TabSearch :visiable="tabIndex === 4" />
-		</view>
-		<view class="hide" :class="{'show': tabIndex === 5 }">
-			<TabSetting :visiable="tabIndex === 5" />
-		</view>
-		<cover-view class="cover">
-			<cover-view v-for="item in tabs" :key="item.index" class="tab-item" @click="navClick(item)">
-				<cover-image class="tab-icon" :src="'../../static/images/tabbar/'+ item.image + [tabIndex === item.index ? '_selected':''] + '.png'"></cover-image>
-				<cover-view class="tab-name" :style="{'color' : tabIndex === item.index ? '#007aff':'#9B9B9B'}">{{item.title}}</cover-view>
-			</cover-view>
-		</cover-view>
 	</view>
 </template>
 
@@ -43,24 +33,21 @@
 		},
 		computed: {
 			title() {
-				return this.tabs[this.tabIndex - 1].title
+				let title = this.tabs[this.tabIndex - 1].title
+				return title
 			}
 		},
 		watch: {
 			tabIndex: {
 				handler(newValue, oldValue) {
-					uni.setNavigationBarTitle({
-						title: this.title
-					})
-					uni.pageScrollTo({
-						scrollTop: 0
-					})
+
 				},
 				immediate: true
 			}
 		},
 		data() {
 			return {
+				triggered: false,
 				navBarHeight: 44 + uni.getSystemInfoSync().statusBarHeight,
 				tabIndex: 1,
 				tabs: [{
@@ -89,11 +76,12 @@
 				]
 			};
 		},
+		mounted() {},
 		methods: {
 			// 导航栏切换
 			navClick: function(e) {
 				this.tabIndex = e.index
-			},
+			}
 		},
 		onPullDownRefresh() {
 			uni.stopPullDownRefresh()
@@ -101,17 +89,26 @@
 		},
 		onReachBottom() {
 			uni.$emit('loadMore')
-		},
+		}
 	}
 </script>
 
 <style lang="less">
-	.home-container {
+	/deep/ .home-container {
 		display: flex;
 		flex-direction: column;
-		min-height: 100vh;
+		height: 100vh;
 		box-sizing: border-box;
-		justify-content: stretch;
+		overflow: hidden;
+
+		// .tab-shelf {
+		// 	flex: 1;
+		// }
+
+		.page {
+			flex: 1;
+			height: 200upx;
+		}
 
 		.hide {
 			display: none;
@@ -123,22 +120,15 @@
 			flex-direction: column;
 		}
 
-		.maxWidth {
-			flex: 1;
-		}
-
 		.cover {
-			height: 100upx;
-			position: fixed;
-			left: 0;
 			width: 100vw;
-			bottom: 0;
 			visibility: visible;
 			background-color: red;
 			min-height: 100upx;
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
+			z-index: 2;
 
 			/*tabbar*/
 			padding: 0;

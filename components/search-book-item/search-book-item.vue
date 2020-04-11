@@ -1,31 +1,27 @@
 <template>
-	<view class="book-item-container" @click="handleItemClick" @longpress="handLongPress">
+	<view class="book-item-container" @click="handleItemClick">
 		<view class="main-container">
 			<view class="top">
 				<view class="name-contaienr">
 					<text class="name">
 						{{book.name}}
 					</text>
-					<view v-if="book.hasNew" class="new" />
-					<view v-if="book.isLoading" class="loading">
-						<image src="../../static/images/other/tail-spin.svg" mode="scaleToFill"></image>
-					</view>
 				</view>
-				<text v-if="isShelf" class="time">
+				<text class="time">
 					{{book.lyWeb}}
 				</text>
-				<text v-else class="time">
-					{{book.updateTime}}
-				</text>
 			</view>
-			<view v-if="isShelf" class="bottom">
+			<view v-if="book.type !== 1" class="bottom">
 				当前:{{book.chapterName}}
-			</view>
-			<view v-else class="bottom">
-				{{book.chapterName}}
 			</view>
 			<view v-if="isShelf" class="bottom">
 				最新:{{book.lastChapterName ? book.lastChapterName : '-'}}
+			</view>
+			<view v-if="book.author" class="bottom">
+				作者:{{book.author}}
+			</view>
+			<view v-if="book.desc" class="bottom">
+				简介:{{book.desc}}
 			</view>
 		</view>
 	</view>
@@ -40,10 +36,6 @@
 			book: {
 				type: Object,
 				default: null
-			},
-			isShelf: {
-				type: Boolean,
-				default: false
 			}
 		},
 		data() {
@@ -55,21 +47,18 @@
 		methods: {
 			handleItemClick() {
 				let url = '../../pages/sodu_update_sites/sodu_update_sites'
-				if (this.isShelf && this.book.sourceUrl) {
-					url = '../../pages/content_page/content_page'
+				if (this.book.type === 1) {
+					url = '../../pages/book_info_page/book_info_page'
 				}
 				uni.navigateTo({
-					url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
+					url: url +
+						`?book=${encodeUTF8(JSON.stringify(Object.assign({},this.book, {
+						fromSearch : true
+					}))
+					)}`,
 					animationType: 'pop-in',
 					animationDuration: 200
 				})
-
-				if (this.isShelf) {
-					this.$emit('bookClick')
-				}
-			},
-			handLongPress() {
-				this.$emit('itemLongPress', this.book)
 			}
 		}
 	}

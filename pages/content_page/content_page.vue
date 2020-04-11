@@ -14,10 +14,8 @@
 				</uniNavBar>
 			</view>
 			<view class="outer">
-				<view class="inner">
-					<scrollContent :book="book" :content="currentCatalog.content" :height="`calc(100vh - ${navBarHeight}px - 20px)`"
-					 @switchAction="handleSwitchAction"></scrollContent>
-				</view>
+				<scrollContent :book="book" :content="currentCatalog.content" :height="`calc(100vh - ${navBarHeight}px - 20px)`"
+				 @switchAction="handleSwitchAction"></scrollContent>
 			</view>
 			<view class="bottom">
 			</view>
@@ -50,6 +48,10 @@
 		getShelfBooks,
 		getShelfBooksById
 	} from '../../utils/bookShelf.js'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		components: {
 			uniNavBar,
@@ -82,39 +84,49 @@
 					`line-height: ${this.config.lineHeight};` +
 					`font-size: ${this.config.fontSize}px;`
 				return style
-			}
+			},
+			...mapState(['storeBookInfo'])
 		},
 		created() {
+			uni.$on('navigateToCatalog', this.handleSwitchCatalog)
 			this.config = getConfig()
 		},
 		onLoad(option) {
-			uni.$on('navigateToCatalog', this.handleSwitchCatalog)
-			if (option.book) {
-				this.book = JSON.parse(decodeUTF8(option.book))
-			} else {
-				this.book = {
-					bookId: "729376",
-					chapterName: "第三百二十六章 野心勃勃",
-					lyWeb: "乐安宣书网",
-					name: "绝对一番",
-					soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
-					sourceUrl: "https://www.dhzw8.com/book/424/424571/118145302.html",
-					updateTime: "2020/03/31 06:16"
-				}
+			// if (!option.book) {
+			// 	return
+			// }
+			// this.book = JSON.parse(decodeUTF8(option.book))
+			this.book = {
+				bookId: "729376",
+				chapterName: "第三百二十六章 野心勃勃",
+				lyWeb: "乐安宣书网",
+				name: "绝对一番",
+				soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
+				sourceUrl: "https://www.dhzw8.com/book/424/424571/118145302.html",
+				updateTime: "2020/03/31 06:16"
 			}
-			this.requestCurrentCatalog({
-				name: this.book.chapterName,
-				url: this.book.sourceUrl,
-				content: ''
-			})
-			// 请求目录
-			this.requestBookInfo(this.book.sourceUrl)
-			this.checkBookStatus()
+			this.initData()
 		},
 		onUnload() {
 			uni.$off('navigateToCatalog')
+			this.clearStorage()
 		},
 		methods: {
+			...mapMutations(['setBookInfo']),
+			initData() {
+				this.checkBookStatus()
+				this.requestCurrentCatalog({
+					name: this.book.chapterName,
+					url: this.book.sourceUrl,
+					content: ''
+				})
+				if (!this.storeBookInfo) {
+					// 请求目录
+					this.requestBookInfo(this.book.sourceUrl)
+				} else {
+					this.bookInfo = this.storeBookInfo
+				}
+			},
 			// 检查是否已经在书架中
 			checkBookStatus() {
 				if (!this.book) {
@@ -138,7 +150,9 @@
 							item.content = res
 							this.currentCatalog = item
 							this.formatCurrentCatalog()
-							this.updateBookShelfInfo(item)
+							this.updateBookShelfInfo(Object.assign({}, item, {
+								lyWeb: this.book.lyWeb
+							}))
 						} else {
 							throw new Error()
 						}
@@ -181,10 +195,7 @@
 						this.bookInfo = res.result
 						this.isRequestBookInfo = false
 						this.formatCurrentCatalog()
-						uni.setStorage({
-							key: _this.book.id + '_book_info',
-							data: res.result
-						})
+						this.setBookInfo(res.result)
 					} else {
 						throw new Error()
 					}
@@ -213,7 +224,6 @@
 						this.currentCatalog.index = index
 					}
 				}
-				this.preLoadNextCatalogs()
 			},
 			// 预加载接下来2章内容
 			preLoadNextCatalogs() {
@@ -296,7 +306,7 @@
 			// 上一章
 			handlePreChapter() {
 				let index = this.currentCatalog.index
-				if (index === 0) {
+				if (index === 0 || typeof index === 'undefined') {
 					this.goToBookInfoPage()
 				} else {
 					let item = this.bookInfo.catalogs[index - 1]
@@ -306,10 +316,11 @@
 			// 下一章
 			handleNextChapter() {
 				let index = this.currentCatalog.index
-				if (index === this.bookInfo.catalogs.length - 1) {
+				if (index === this.bookInfo.catalogs.length - 1 || typeof index === 'undefined') {
 					this.goToBookInfoPage()
 				} else {
 					this.handleSwitchCatalog(this.bookInfo.catalogs[index + 1])
+					this.preLoadNextCatalogs()
 				}
 			},
 			//切换章节
@@ -326,6 +337,9 @@
 					name: this.currentCatalog.name,
 					content: null
 				})
+			},
+			clearStorage() {
+				this.setBookInfo(null)
 			}
 		}
 	}
@@ -349,7 +363,7 @@
 			display: flex;
 			flex-direction: column;
 			overflow: hidden;
-			width: 50vw;
+			width: 45vw;
 
 			.book-name {
 				flex: 1;
@@ -384,10 +398,7 @@
 
 		.outer {
 			flex: 1;
-
-			.inner {
-				height: 100%;
-			}
+			overflow-x: auto;
 		}
 
 		.bottom {

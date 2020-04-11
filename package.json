@@ -9,8 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "adtabbar": "^1.0.0",
     "flyio": "^0.6.14",
-    "unifly": "^1.0.2"
+    "mescroll-uni": "^1.2.5",
+    "unifly": "^1.0.2",
+    "vuex": "^3.1.3"
   }
 }

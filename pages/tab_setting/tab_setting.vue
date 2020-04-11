@@ -2,10 +2,10 @@
 	<!--pages/tab_setting/tab_setting.wxml-->
 	<view class='tab_setting'>
 		<view class='switch-container'>
-			<view class="switch-item" @click="handleToHistory">
+			<!-- <view class="switch-item" @click="handleToHistory">
 				<view class="switch-item-title">历史记录</view>
 				<uniIcons type="arrowright"></uniIcons>
-			</view>
+			</view> -->
 			<view class="switch-item" @click="handleToSync">
 				<view class="switch-item-title">同步个人书架(实验功能)</view>
 				<uniIcons type="arrowright"></uniIcons>
@@ -57,9 +57,12 @@
 
 <style lang="less" scoped>
 	.tab_setting {
+		position: relative;
 		min-height: 50vh;
-		padding-bottom: 300upx;
 		box-sizing: border-box;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 10upx;
 
 		.switch-container {
 			border-top: 1upx solid #d9d9d9;

@@ -1,61 +1,88 @@
 <template>
 	<view class="tab-search-container">
-		<view class="search-container">
-			<uniSearchBar bgColor="#ffffff" radius='6' @confirm="handleSearch" @clear="handleClear" />
-		</view>
-		<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+		<mescroll-uni :fixed="false" class="scroll" ref="mescrollRef" @init="mescrollInit" :down="downOption" :up="upOption">
+			<view class="search-container">
+				<uniSearchBar bgColor="#ffffff" radius='6' @confirm="handleSearch" @clear="handleClear" />
+			</view>
+			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+		</mescroll-uni>
 		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
 	</view>
 </template>
 
 <script>
 	import uniSearchBar from '@/components/uni-search-bar/uni-search-bar.vue'
-	import BookItem from '../../components/BookItem/BookItem.vue'
+	import BookItem from '../../components/search-book-item/search-book-item.vue'
 	import wLoading from '@/components/w-loading/w-loading.vue';
 	import {
 		search
 	} from '../../api/sodu.js'
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
+	import {
+		mapState
+	} from 'vuex'
 	export default {
+		mixins: [MescrollMixin],
 		components: {
 			uniSearchBar,
 			BookItem,
 			wLoading
 		},
-
 		data() {
 			return {
 				key: '',
 				books: [],
 				showMenu: false,
 				selectedBook: null,
-				isLoading: false
+				isLoading: false,
+				// 下拉刷新的常用配置
+				downOption: {
+					use: false // 是否启用下拉刷新; 默认true
+				},
+				upOption: {
+					use: false,
+					toTop: {
+						rc: null,
+						offset: 1000,
+						duration: 300,
+						zIndex: 9990,
+						right: 20,
+						bottom: 160,
+						safearea: true,
+						width: 72,
+						radius: "50%",
+						left: null
+					}
+				}
 			};
+		},
+		computed: {
+			...mapState(['searchSources'])
 		},
 		methods: {
 			async handleSearch(input) {
 				try {
 					this.isLoading = true
-					let res = await search(input.value)
-					if (res.code === 0) {
-						this.books = []
-						setTimeout(() => {
-							this.books = res.result
-						}, 0)
-					} else {
-						throw new Error(res.message)
-					}
-				} catch (e) {
-					setTimeout(() => {
-						uni.showToast({
-							icon: 'none',
-							title: e.message || '请求数据失败,请重新尝试',
-							duration: 3000
-						});
+					this.books = []
+					let count = this.searchSources.length
+					this.searchSources.forEach(e => {
+						search({
+							parm: input.value,
+							source: e
+						}).then(res => {
+							if (res.code === 0) {
+								this.books = this.books.concat(res.result)
+							} else {
+								throw new Error()
+							}
+						}).catch(e => {}).finally(e => {
+							count--
+							if (count === 0) {
+								this.isLoading = false
+							}
+						})
 					})
-				} finally {
-					uni.hideLoading()
-					this.isLoading = false
-				}
+				} catch (e) {}
 			},
 			handleClear() {
 				this.books = []
@@ -78,5 +105,8 @@
 		padding: 0upx 0 0 0;
 		height: 100%;
 		box-sizing: border-box;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 10upx;
 	}
 </style>

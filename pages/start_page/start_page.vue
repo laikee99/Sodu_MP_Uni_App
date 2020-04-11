@@ -3,34 +3,51 @@
 		<image class="img" src="../../static/logo.png" mode="scaleToFill"></image>
 
 		<view class="text">
-			启动中，请稍候...
+			{{info}}
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		init
+	} from '../../api/common.js'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
-
+				info: '启动中，请稍候...'
 			}
 		},
 		onLoad() {
-			this.checkStatus()
+			this.initInfo()
 		},
 		methods: {
-			checkStatus() {
-				setTimeout(() => {
+			...mapMutations(['setSearch']),
+			async initInfo() {
+				try {
+					let res = await init()
+					if (res.result.status) {
+						this.setSearch(res.result.search)
 					this.goHome()
-				}, 1000)
-			},
-			goHome() {
-				uni.redirectTo({
-					url: '../../pages/home_page/home_page',
-					animationType: 'pop-in'
-				})
+				} else {
+					throw new Error()
+				}
+			} catch (e) {
+				console.log(e)
+				this.info = '启动失败,请稍候重试...'
 			}
+		},
+		goHome() {
+			uni.redirectTo({
+				url: '../../pages/home_page/home_page',
+				animationType: 'pop-in'
+			})
 		}
+	}
 	}
 </script>
 

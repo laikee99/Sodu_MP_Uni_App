@@ -13,10 +13,8 @@ export function getRecentUpdates() {
 	return get('/sodu/recent')
 }
 
-export function search(parm) {
-	return get('/sodu/search', {
-		parm: parm
-	})
+export function search(obj) {
+	return get('/sodu/search', obj)
 }
 
 export function getUpdateSites(url, bookId, page) {

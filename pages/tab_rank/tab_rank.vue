@@ -1,12 +1,14 @@
 <template>
 	<view class="tab-rank">
-		<view v-if="books && books.length > 0">
-			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" />
-		</view>
-		<view v-else class="empty">
-			暂无数据
-		</view>
-		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
+		<mescroll-uni :fixed="false" class="scroll" ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption"
+		 :up="upOption" @up="upCallback">
+			<view v-if="books && books.length > 0">
+				<BookItem v-for="(item) in books" :key="item.bookId" :book="item" />
+			</view>
+			<view v-else class="empty">
+				暂无数据
+			</view>
+		</mescroll-uni>
 	</view>
 </template>
 
@@ -15,11 +17,11 @@
 		getRanks
 	} from '../../api/sodu.js'
 	import BookItem from '../../components/BookItem/BookItem.vue'
-	import wLoading from '@/components/w-loading/w-loading.vue';
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	export default {
+		mixins: [MescrollMixin],
 		components: {
-			BookItem,
-			wLoading
+			BookItem
 		},
 		props: {
 			visiable: {
@@ -33,49 +35,46 @@
 				page: -1,
 				showMenu: false,
 				selectedBook: null,
-				isLoading: false
+				isLoading: false,
+				// 下拉刷新的常用配置
+				downOption: {
+					use: true, // 是否启用下拉刷新; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
+					// textLoading: '...'
+				},
+				upOption: {
+					use: true,
+					auto: false,
+					textLoading: '加载更多...',
+					toTop: {
+						rc: null,
+						offset: 1000,
+						duration: 300,
+						zIndex: 9990,
+						right: 20,
+						bottom: 160,
+						safearea: true,
+						width: 72,
+						radius: "50%",
+						left: null
+					}
+				}
 			};
 		},
 		watch: {
-			page(newValue, oldValue) {
-				if (this.visiable) {
-					uni.setNavigationBarTitle({
-						title: `排行榜（${this.page}/8）`
-					})
-				}
-			}
-		},
-		created() {
-			// 下拉刷新
-			uni.$on('pullDwomRefresh', this.hanleRefresh)
-			//  加载更多
-			uni.$on('loadMore', this.handleLoadMore)
 		},
 		mounted() {
-			this.initBooks(1)
 		},
 		methods: {
-			hanleRefresh(index) {
-				if (!this.visiable) {
-					return
-				}
-				this.initBooks(1)
-			},
-			handleLoadMore(index) {
-				if (!this.visiable) {
-					return
-				}
-				this.initBooks(this.page + 1)
-			},
-			async initBooks(index = 1, isRefresh = true) {
-				if (index > 8) {
+			async initBooks(index = 1, showLoading = true) {
+				if (index > 8 || this.isLoading) {
 					return
 				}
 				try {
-					this.isLoading = true
+					this.isLoading = showLoading
 					let res = await getRanks(index)
 					if (res.code === 0) {
-						this.books = isRefresh ? res.result : this.books.concat(res.result)
+						this.books = index === 1 ? res.result : this.books.concat(res.result)
 						this.page = index
 					} else {
 						throw new Error(res.message)
@@ -99,6 +98,16 @@
 			closeMenu() {
 				this.showMenu = false
 				this.selectedBook = null
+			},
+			downCallback() {
+				this.initBooks(1, false).then(() => {
+					this.mescroll.endSuccess()
+				})
+			},
+			upCallback() {
+				this.initBooks(this.page + 1, false).then(() => {
+					this.mescroll.endSuccess(50, this.page < 8 ? true : false)
+				})
 			}
 		}
 	}
@@ -108,8 +117,10 @@
 	.tab-rank {
 		position: relative;
 		min-height: 50vh;
-		padding-bottom: 140upx;
 		box-sizing: border-box;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 10upx;
 
 		.empty {
 			position: absolute;
@@ -120,6 +131,6 @@
 			color: #808080;
 			text-align: center;
 		}
-	 
+
 	}
 </style>

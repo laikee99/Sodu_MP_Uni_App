@@ -1,13 +1,14 @@
 <template>
 	<view class="tab-update">
-		<view v-if="books && books.length > 0">
-			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
-		</view>
-		<view v-else class="empty">
-			暂无数据
-		</view>
-		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" />
-		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
+		<mescroll-uni :fixed="false" class="scroll" ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback"
+		 :down="downOption" :up="upOption">
+			<view v-if="books && books.length > 0">
+				<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+			</view>
+			<view v-else class="empty">
+				暂无数据
+			</view>
+		</mescroll-uni>
 	</view>
 </template>
 
@@ -17,12 +18,12 @@
 	} from '../../api/sodu.js'
 	import BookItem from '../../components/BookItem/BookItem.vue'
 	import Popupmenus from '../../components/PopupMenus/index.vue'
-	import wLoading from '@/components/w-loading/w-loading.vue';
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	export default {
+		mixins: [MescrollMixin],
 		components: {
 			BookItem,
-			Popupmenus,
-			wLoading
+			Popupmenus
 		},
 		props: {
 			visiable: {
@@ -35,21 +36,27 @@
 				books: [],
 				showMenu: false,
 				selectedBook: null,
-				isLoading: false
+				isLoading: false,
+				// 下拉刷新的常用配置
+				downOption: {
+					use: true, // 是否启用下拉刷新; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
+					textLoading: '加载中...'
+				},
+				upOption: {
+					use: false
+				}
 			};
 		},
 		mounted() {
-			// 下拉刷新
-			uni.$on('pullDwomRefresh', this.initBooks)
 			this.initBooks()
-		},
-		onPullDownRefresh() {
-			this.initBooks()
-			uni.stopPullDownRefresh()
 		},
 		methods: {
 			async initBooks() {
 				try {
+					if (this.isLoading) {
+						return
+					}
 					this.isLoading = true
 					let res = await getRecentUpdates()
 					if (res.code === 0) {
@@ -76,6 +83,14 @@
 			closeMenu() {
 				this.showMenu = false
 				this.selectedBook = null
+			},
+			downCallback() {
+				this.initBooks().then(() => {
+					this.mescroll.endSuccess()
+				})
+			},
+			upCallback() {
+
 			}
 		}
 	}
@@ -84,7 +99,12 @@
 <style lang="less" scoped>
 	.tab-update {
 		position: relative;
-		min-height: 100vh;
+		min-height: 50vh;
+		box-sizing: border-box;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 10upx;
+
 
 		.empty {
 			position: absolute;

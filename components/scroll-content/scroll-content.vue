@@ -1,32 +1,36 @@
 <template>
 	<view class="scroll-container">
-		<scroll-view class="scroll" scroll-y="true" :style="{'height': height}" :scroll-top="scrollTop" @scroll="handleScroll">
-			<view class="content">
-				<view class="paragrah" v-for="(item,index) in content" :key="index">
-					{{item}}
+		<mescroll-uni :fixed="false" class="scroll" ref="mescrollRef" @init="mescrollInit" :down="downOption" :up="upOption">
+			<view class="content" :style="{'min-height' : `calc(100vh - ${navBarHeight}px - 20px)`}">
+				<view class="list">
+					<view class="paragrah" v-for="(item,index) in content" :key="index">
+						{{item}}
+					</view>
+				</view>
+				<view class="btns">
+					<view class="btn" @click="handleSwitchAction(1)">
+						上一章
+					</view>
+					<view class="btn" @click="handleSwitchAction(2)">
+						目录
+					</view>
+					<view class="btn" @click="handleSwitchAction(3)">
+						下一章
+					</view>
+					<view v-if="book && book.soduUpdatePageUrl" class="btn" @click="handleSwitchAction(4)">
+						更新站点
+					</view>
 				</view>
 			</view>
-			<view class="btns">
-				<view class="btn" @click="handleSwitchAction(1)">
-					上一章
-				</view>
-				<view class="btn" @click="handleSwitchAction(2)">
-					目录
-				</view>
-				<view class="btn" @click="handleSwitchAction(3)">
-					下一章
-				</view>
-				<view v-if="book && book.soduUpdatePageUrl" class="btn" @click="handleSwitchAction(4)">
-					更新站点
-				</view>
-			</view>
-		</scroll-view>
+		</mescroll-uni>
 	</view>
 
 </template>
 
 <script>
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	export default {
+		mixins: [MescrollMixin],
 		props: {
 			book: {
 				type: Object,
@@ -44,26 +48,28 @@
 		watch: {
 			content(newValue, oldValue) {
 				if (newValue) {
-					this.toTop()
+					this.mescroll.scrollTo(0, 0)
 				}
 			}
 		},
 		data() {
 			return {
-				scrollTop: 0
+				navBarHeight: 44 + uni.getSystemInfoSync().statusBarHeight,
+				// 下拉刷新的常用配置
+				downOption: {
+					use: false, // 是否启用下拉刷新; 默认true
+					auto: false, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
+					textLoading: ' 加载中...'
+				},
+				upOption: {
+					use: false
+				}
 			};
 		},
-		mounted() {
-		},
+		mounted() {},
 		methods: {
 			handleSwitchAction(key) {
 				this.$emit('switchAction', key)
-			},
-			toTop() {
-				this.scrollTop = 0
-			},
-			handleScroll(e) {
-				this.debounceScroll(e)
 			},
 			debounceScroll(e) {
 				clearTimeout(this.timerId)
@@ -80,19 +86,18 @@
 		width: 100%;
 		height: 100%;
 
-		.scroll {
-			overflow-x: hidden;
-			box-sizing: border-box;
-		}
-
 		.content {
-			min-height: 100%;
 			box-sizing: border-box;
 			position: relative;
-			padding: 10upx 16upx 0 30upx;
-			padding-bottom: 70upx;
+			padding: 10upx 14upx 0 30upx;
 			z-index: 1;
 			position: relative;
+			display: flex;
+			flex-direction: column;
+
+			.list {
+				flex: 1;
+			}
 
 			.paragrah {
 				text-indent: 2em;
@@ -100,15 +105,16 @@
 		}
 
 		.btns {
-			width: 100vw;
+			width: 100%;
+			margin-left: -10upx;
 			display: flex;
 			justify-content: space-around;
 			align-items: center;
-			height: 70upx;
-			margin-top: -70upx;
+			height: 80upx;
 			z-index: 2;
 			position: relative;
-			margin-bottom: 20px;
+			margin-top: 20px;
+
 
 			.btn {
 				height: 60upx;

@@ -5,16 +5,16 @@
 		 @scroll="handleScroll">
 			<view class="book-info">
 				<view class="item name">
-					{{book.name}}
+					{{book ? book.name : '--'}}
 				</view>
 				<view class="item">
-					作者：{{info.author}}
+					作者：{{storeBookInfo ? storeBookInfo.author : '--'}}
 				</view>
 				<view class="item">
-					来源网站：{{info.webName}}
+					来源网站：{{storeBookInfo ? storeBookInfo.webName : '--'}}
 				</view>
 				<text class="item">
-					简介：{{info.desc}}
+					简介：{{storeBookInfo ? storeBookInfo.desc : '--'}}
 				</text>
 			</view>
 			<view v-for="(item,index) in currentList" class="chapter-item" :key="item.url" @click="handleItemClick(item)">
@@ -40,6 +40,7 @@
 				到底部
 			</view>
 		</view>
+		<Loading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></Loading>
 	</view>
 </template>
 
@@ -53,6 +54,14 @@
 		getConfig,
 		colors
 	} from '../../utils/config.js'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
+	import {
+		getBookInfo
+	} from '@/api/content.js'
+
 	export default {
 		components: {
 			uniNavBar
@@ -64,10 +73,10 @@
 		},
 		data() {
 			return {
+				isLoading: false,
 				scrollTop: 0,
 				navBarHeight: 44 + uni.getSystemInfoSync().statusBarHeight,
 				book: null,
-				info: null,
 				config: null,
 				themeValue: null,
 				allList: [],
@@ -84,12 +93,18 @@
 					`line-height: ${this.config.lineHeight};` +
 					`font-size: ${this.config.fontSize}px;`
 				return style
-			}
+			},
+			...mapState(['storeBookInfo'])
 		},
 		onLoad(option) {
-			if (option.book) {
-				this.book = JSON.parse(decodeUTF8(option.book))
-				this.initInfo()
+			if (!option.book) {
+				return
+			}
+			this.book = JSON.parse(decodeUTF8(option.book))
+			if (this.book.fromSearch && this.book.type === 1) {
+				this.initBookinfo()
+			} else {
+				this.splitCatalogs()
 			}
 		},
 		created() {
@@ -97,24 +112,28 @@
 			this.themeValue = colors[this.config.theme]
 		},
 		methods: {
-			initInfo() {
-				let _this = this
-				uni.getStorage({
-					key: _this.book.id + '_book_info',
-					complete(res) {
-						_this.info = res.data
-						_this.splitCatalogs()
+			...mapMutations(['setBookInfo']),
+			async initBookinfo() {
+				try {
+					this.isLoading = true
+					let res = await getBookInfo(this.book.bookInfoUrl, 1)
+					if (res.code === 0) {
+						this.setBookInfo(res.result)
+						this.splitCatalogs()
 					}
-				})
+				} catch (e) {
+					//TODO handle the exception
+				} finally {
+					this.isLoading = false
+				}
 			},
 			splitCatalogs() {
-				if (!this.info || !this.info.catalogs || this.info.catalogs.length === 0) {
+				if (!this.storeBookInfo || !this.storeBookInfo.catalogs || this.storeBookInfo.catalogs.length === 0) {
 					return
 				}
-
 				let temp = []
-				let length = this.info.catalogs.length
-				this.info.catalogs.forEach((e, index) => {
+				let length = this.storeBookInfo.catalogs.length
+				this.storeBookInfo.catalogs.forEach((e, index) => {
 					temp.push(e)
 					if (temp.length === 100) {
 						this.allList.push(temp)
@@ -128,8 +147,21 @@
 				this.currentList = this.allList[0]
 			},
 			handleItemClick(item) {
-				uni.$emit('navigateToCatalog', item)
-				uni.navigateBack()
+				if (this.book.fromSearch) {
+					let url = '../../pages/content_page/content_page'
+					this.book.sourceUrl = item.url
+					this.book.chapterName = item.name
+					delete this.book.fromSearch
+					delete this.book.type
+					uni.redirectTo({
+						url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
+						animationType: 'pop-in',
+						animationDuration: 200
+					})
+				} else {
+					uni.$emit('navigateToCatalog', item)
+					uni.navigateBack()
+				}
 			},
 			handleScroll(e) {
 				this.debounceScroll(e)
@@ -200,7 +232,7 @@
 		.list-container {
 			flex: 1;
 			background: inherit;
-			
+
 
 			.book-info {
 				padding: 20upx;

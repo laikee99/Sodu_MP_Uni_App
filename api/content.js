@@ -8,8 +8,9 @@ export function getContent(url) {
 	})
 }
 
-export function getBookInfo(url){
+export function getBookInfo(url, direct = 0) {
 	return get('/content/info', {
-		url
+		url,
+		direct
 	})
 }

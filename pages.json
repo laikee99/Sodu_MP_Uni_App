@@ -1,6 +1,12 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/content_page/content_page",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/start_page/start_page",
 			"style": {
 				// "navigationStyle": "custom",
@@ -13,7 +19,8 @@
 			"path": "pages/home_page/home_page",
 			"style": {
 				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": false,
+				"disableScroll": true
 			}
 		},
 		{
@@ -87,12 +94,7 @@
 			"path": "pages/history_page/history_page",
 			"style": {}
 		},
-		{
-			"path": "pages/content_page/content_page",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
+
 		{
 			"path": "pages/book_info_page/book_info_page",
 			"style": {
@@ -106,42 +108,42 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
-	},
-	"tabBar": {
-		"selectedColor": "#007aff",
-		"color": "#a9b7b7",
-		"borderStyle": "black",
-		"backgroundColor": "#F7F7FA",
-		"list": [{
-				"pagePath": "pages/tab_shelf/tab_shelf",
-				"text": "书架",
-				"iconPath": "static/images/tabbar/tabbar_local_shelf.png",
-				"selectedIconPath": "static/images/tabbar/tabbar_local_shelf_selected.png"
-			},
-			{
-				"pagePath": "pages/tab_rank/tab_rank",
-				"text": "排行",
-				"iconPath": "static/images/tabbar/tabbar_rank.png",
-				"selectedIconPath": "static/images/tabbar/tabbar_rank_selected.png"
-			},
-			{
-				"pagePath": "pages/tab_update/tab_update",
-				"text": "最近更新",
-				"iconPath": "static/images/tabbar/tabbar_update.png",
-				"selectedIconPath": "static/images/tabbar/tabbar_update_selected.png"
-			},
-			{
-				"pagePath": "pages/tab_search/tab_search",
-				"text": "搜索",
-				"iconPath": "static/images/tabbar/tabbar_search.png",
-				"selectedIconPath": "static/images/tabbar/tabbar_search_selected.png"
-			},
-			{
-				"pagePath": "pages/tab_setting/tab_setting",
-				"text": "设置",
-				"iconPath": "static/images/tabbar/tabbar_setting.png",
-				"selectedIconPath": "static/images/tabbar/tabbar_setting_selected.png"
-			}
-		]
 	}
+	// "tabBar": {
+	// 	"selectedColor": "#007aff",
+	// 	"color": "#a9b7b7",
+	// 	"borderStyle": "black",
+	// 	"backgroundColor": "#F7F7FA",
+	// 	"list": [{
+	// 			"pagePath": "pages/tab_shelf/tab_shelf",
+	// 			"text": "书架",
+	// 			"iconPath": "static/images/tabbar/tabbar_local_shelf.png",
+	// 			"selectedIconPath": "static/images/tabbar/tabbar_local_shelf_selected.png"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/tab_rank/tab_rank",
+	// 			"text": "排行",
+	// 			"iconPath": "static/images/tabbar/tabbar_rank.png",
+	// 			"selectedIconPath": "static/images/tabbar/tabbar_rank_selected.png"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/tab_update/tab_update",
+	// 			"text": "最近更新",
+	// 			"iconPath": "static/images/tabbar/tabbar_update.png",
+	// 			"selectedIconPath": "static/images/tabbar/tabbar_update_selected.png"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/tab_search/tab_search",
+	// 			"text": "搜索",
+	// 			"iconPath": "static/images/tabbar/tabbar_search.png",
+	// 			"selectedIconPath": "static/images/tabbar/tabbar_search_selected.png"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/tab_setting/tab_setting",
+	// 			"text": "设置",
+	// 			"iconPath": "static/images/tabbar/tabbar_setting.png",
+	// 			"selectedIconPath": "static/images/tabbar/tabbar_setting_selected.png"
+	// 		}
+	// 	]
+	// }
 }

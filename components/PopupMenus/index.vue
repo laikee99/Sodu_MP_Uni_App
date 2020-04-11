@@ -1,24 +1,24 @@
 <template>
-	<cover-view class="pupup-menus-container" @touchmove="stopPop" @click="hiddenMenus">
-		<cover-view class="menu-item book-name" @click="stopPop">
+	<view class="pupup-menus-container" @touchmove="stopPop" @click="hiddenMenus">
+		<view class="menu-item book-name" @click="stopPop">
 			{{book.name}}
-		</cover-view>
-		<cover-view class="split"></cover-view>
+		</view>
+		<view class="split"></view>
 
-		<cover-view class="menu-item" @click="handleRefresh">
+		<view class="menu-item" @click="handleRefresh">
 			检查更新
-		</cover-view>
-		<cover-view class="split"></cover-view>
+		</view>
+		<view class="split"></view>
 
-		<cover-view class="menu-item" @click="handleViewUpdateSites">
+		<view v-if="book.soduUpdatePageUrl" class="menu-item" @click="handleViewUpdateSites">
 			查看更新站点
-		</cover-view>
-		<cover-view class="split"></cover-view>
+		</view>
+		<view class="split"></view>
 
-		<cover-view class="menu-item delete" @click="handleDeleteBook">
+		<view class="menu-item delete" @click="handleDeleteBook">
 			从书架中移除
-		</cover-view>
-	</cover-view>
+		</view>
+	</view>
 </template>
 
 <script>
@@ -57,7 +57,6 @@
 			},
 			// 关闭按钮
 			hiddenMenus() {
-				console.log('========k')
 				this.$emit('closeMenu')
 			},
 			handleDeleteBook() {
@@ -72,16 +71,15 @@
 		position: fixed;
 		left: 0upx;
 		top: 0upx;
-		bottom: 100px;
-		width: 100%;
-		height: 100%;
+		bottom: 0;
+		width: 100vw;
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
 		text-align: center;
 		background: rgba(0, 0, 0, 0.6);
 		z-index: 999;
-		padding-bottom: 100px;
 
 		.menu-item {
 			position: relative;

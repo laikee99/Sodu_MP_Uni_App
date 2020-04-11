@@ -30,6 +30,7 @@
 		<view class="desc">
 			说明：小程序服务器只做数据转发，且只读写用户书架数据。不会读取您的其他信息，亦不会存储您输入的任何信息。该功能是实验性功能，可能会出现同步失败或错误等情况，敬请谅解。
 		</view>
+		<Loading v-if="isLoading" class="loading-container" :text="loadingText" mask="true" click="false"></Loading>
 	</view>
 </template>
 
@@ -47,6 +48,8 @@
 		components: {},
 		data() {
 			return {
+				isLoading: false,
+				loadingText: '加载中...',
 				config: {
 					server: '',
 					userName: '',
@@ -78,22 +81,24 @@
 				if (!this.checkConfig()) {
 					return
 				}
+				saveConfig(this.config)
 				uni.showModal({
 					title: '提示',
 					content: '下载云端数据，本地书架数据将被清空，确定下载？',
 					success: function(res) {
 						if (res.confirm) {
-							that.handleDownload2()
+							that.downloadAction()
 						} else if (res.cancel) {
 							return
 						}
 					}
 				});
 			},
-			async handleDownload2() {
+			async downloadAction() {
 
 				try {
-					saveConfig(this.config)
+					this.loadingText = '下载中...'
+					this.isLoading = true
 					let res = await download(this.config)
 					if (res.code === 0) {
 						saveBooks(res.result, () => {
@@ -114,6 +119,8 @@
 						title: e.message,
 						duration: 2000
 					})
+				} finally {
+					this.isLoading = false
 				}
 			},
 			async handleUpload() {
@@ -121,6 +128,7 @@
 					return
 				}
 				try {
+					this.isLoading = true
 					saveConfig(this.config)
 					let res = await upload(this.config)
 					if (res.code === 0) {
@@ -139,6 +147,8 @@
 						title: e.message,
 						duration: 2000
 					})
+				} finally {
+					this.isLoading = false
 				}
 
 			}

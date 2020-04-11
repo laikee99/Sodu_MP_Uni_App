@@ -52,7 +52,6 @@ export function updateBook(book) {
 		if (books) {
 			let index = books.findIndex(e => e.bookId === book.bookId)
 			if (index > -1) {
-				book.shelfTime = +new Date()
 				books[index] = book
 				saveBooks(books)
 			}
