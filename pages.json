@@ -18,7 +18,8 @@
 		{
 			"path": "pages/home_page_simple/home_page_simple",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"disableScroll": true
 			}
 		},
 

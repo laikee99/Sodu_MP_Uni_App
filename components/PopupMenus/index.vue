@@ -35,7 +35,7 @@
 				{{book.name}}
 			</view>
 			<view class="split"></view>
-			<view class="menu-item" @click="handleAddToShelf">
+			<view class="menu-item add" @click="handleAddToShelf">
 				添加收藏
 			</view>
 		</view>
@@ -129,8 +129,13 @@
 				font-size: 34upx;
 				line-height: 150upx;
 			}
-
-
+			
+			&.add {
+				font-weight: 500;
+				height: 150upx;
+				font-size: 34upx;
+				line-height: 150upx;
+			}
 		}
 
 		.split {
