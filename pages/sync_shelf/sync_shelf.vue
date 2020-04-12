@@ -55,9 +55,9 @@
 				isLoading: false,
 				loadingText: '加载中...',
 				config: {
-					server: 'https://dav.jianguoyun.com/dav/',
-					userName: 'ruobin521@gmail.com',
-					passWord: 'aepcumn27rfz9yrv'
+					server: '',
+					userName: '',
+					passWord: ''
 				}
 			};
 		},

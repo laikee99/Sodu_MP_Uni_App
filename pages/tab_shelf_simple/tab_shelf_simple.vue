@@ -6,7 +6,7 @@
 				<BookItem v-for="(item) in books" :key="item.bookId" :book="item" isShelf="true" @itemLongPress="handleItemLongPress" />
 			</view>
 			<view v-else class="empty">
-				您的书架空空如也, 请搜索关键词后长按列表项添加收藏~。
+				您的收藏夹很孤独, 请搜索关键词后长按列表项添加收藏~。
 			</view>
 		</mescroll-uni>
 		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" @bookRefresh="bookRefresh" type="shelf_simple"
