@@ -67,7 +67,8 @@
 		},
 		methods: {
 			async initBooks(index = 1, showLoading = true) {
-				if (index > 8 || this.isLoading) {
+				
+				if (index > 8 || this.isLoading || this.$store.state.status === 0) {
 					return
 				}
 				try {

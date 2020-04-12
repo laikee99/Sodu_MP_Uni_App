@@ -97,7 +97,7 @@
 			...mapState(['storeBookInfo'])
 		},
 		onLoad(option) {
-			if (!option.book) {
+			if (!option.book || this.$store.state.status === 0) {
 				return
 			}
 			this.book = JSON.parse(decodeUTF8(option.book))

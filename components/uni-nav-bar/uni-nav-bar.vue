@@ -169,7 +169,7 @@
 			},
 			goHome() {
 				uni.redirectTo({
-					url: '../../pages/home_page/home_page',
+					url: this.$store.state.status === 0 ? '../../pages/home_page_simple/home_page_simple' : '../../pages/home_page/home_page',
 					animationType: 'pop-in'
 				})
 			}

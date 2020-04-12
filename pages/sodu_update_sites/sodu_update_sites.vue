@@ -53,7 +53,7 @@
 		},
 		methods: {
 			async initBooks(page = 1, isRefresh = false) {
-				if (page > this.totalPage) {
+				if (page > this.totalPage || this.$store.state.status === 0) {
 					return
 				}
 				try {

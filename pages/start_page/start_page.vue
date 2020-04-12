@@ -1,7 +1,6 @@
 <template>
 	<view class="start-page">
 		<image class="img" src="../../static/logo.png" mode="scaleToFill"></image>
-
 		<view class="text">
 			{{info}}
 		</view>

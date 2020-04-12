@@ -91,7 +91,6 @@
 				if (!this.info || !this.info.catalogs || this.info.catalogs.length === 0) {
 					return
 				}
-
 				let temp = []
 				let length = this.info.catalogs.length
 				this.info.catalogs.forEach((e, index) => {

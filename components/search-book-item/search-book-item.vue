@@ -50,7 +50,7 @@
 		created() {},
 		methods: {
 			handleItemClick() {
-				if (this.status === 0) {
+				if (this.$store.state.status === 0) {
 					return
 				}
 				let url = '../../pages/sodu_update_sites/sodu_update_sites'

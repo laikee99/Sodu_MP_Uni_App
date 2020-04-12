@@ -54,6 +54,9 @@
 		created() {},
 		methods: {
 			handleItemClick() {
+				if (this.$store.state.status === 0) {
+					return
+				}
 				let url = '../../pages/sodu_update_sites/sodu_update_sites'
 				if (this.isShelf && this.book.sourceUrl) {
 					url = '../../pages/content_page/content_page'

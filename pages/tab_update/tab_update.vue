@@ -54,7 +54,7 @@
 		methods: {
 			async initBooks() {
 				try {
-					if (this.isLoading) {
+					if (this.isLoading || this.$store.state.status === 0) {
 						return
 					}
 					this.isLoading = true
