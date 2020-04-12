@@ -108,7 +108,7 @@
 			// 	lyWeb: "乐安宣书网",
 			// 	name: "我的1979",
 			// 	soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
-			// 	sourceUrl: "https://www.zwdu.com/book/19834/5603288.html",
+			// 	sourceUrl: "https://www.biquge5.tv/90_90691/31654669.html",
 			// 	updateTime: "2020/03/31 06:16"
 			// }
 			// // } else {
@@ -199,18 +199,18 @@
 			// 加载目录数据
 			async requestBookInfo(url, time = 0) {
 				try {
-					let _this = this
 					this.isRequestBookInfo = true
 					let res = await getBookInfo(url)
 					if (res.code === 0) {
 						this.bookInfo = res.result
 						this.isRequestBookInfo = false
-						this.formatCurrentCatalog()
 						this.setBookInfo(res.result)
+						this.formatCurrentCatalog()
 					} else {
 						throw new Error()
 					}
 				} catch (e) {
+					console.log(e)
 					if (time < 3) {
 						this.requestBookInfo(url, ++time)
 					} else {
@@ -225,16 +225,21 @@
 				}
 			},
 			formatCurrentCatalog() {
-				if (!this.bookInfo) {
-					return
-				}
-				if (this.currentCatalog.content) {
-					let index = this.bookInfo.catalogs.findIndex(e => e.url === this.currentCatalog.url)
-					if (index > -1) {
-						this.bookInfo.catalogs[index].content = this.currentCatalog.content
-						this.currentCatalog.index = index
+				try {
+					if (!this.bookInfo || !this.currentCatalog) {
+						return
 					}
+					if (this.currentCatalog.content) {
+						let index = this.bookInfo.catalogs.findIndex(e => e.url === this.currentCatalog.url)
+						if (index > -1) {
+							this.bookInfo.catalogs[index].content = this.currentCatalog.content
+							this.currentCatalog.index = index
+						}
+					}
+				} catch (e) {
+					console.log(e)
 				}
+
 			},
 			// 预加载接下来2章内容
 			preLoadNextCatalogs() {

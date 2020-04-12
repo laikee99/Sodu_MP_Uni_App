@@ -100,7 +100,7 @@
 							parm: input.value,
 							source: e
 						}).then(res => {
-							if (res.code === 0) {
+							if (res.code === 0 && res.result && res.result.length > 0) {
 								this.books = this.books.concat(res.result)
 							} else {
 								throw new Error()
