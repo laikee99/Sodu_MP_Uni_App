@@ -94,6 +94,12 @@
 		},
 		mounted() {},
 		onLoad(option) {
+			if (this.$store.state.status === 0) {
+				uni.reLaunch({
+					url: '../home_page_simple/home_page_simple'
+				})
+				return
+			}
 			if (option.from === 'info') {
 				this.setBookInfo(null)
 			}
