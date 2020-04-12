@@ -16,14 +16,21 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+
+	import {
+		getManualConfig
+	} from '../../utils/system.js'
+
 	export default {
 		data() {
 			return {
-				info: '启动中，请稍候...'
+				info: '启动中，请稍候...',
+				isManual: false
 			}
 		},
 		onLoad() {
 			this.initInfo()
+			this.isManual = getManualConfig()
 		},
 		methods: {
 			...mapMutations(['setInitData']),
@@ -31,6 +38,7 @@
 				try {
 					let res = await init()
 					if (res && res.code === 0) {
+						res.result.status = this.isManual ? 1 : 0
 						this.setInitData(res.result)
 						res.result.status ? this.goHome() : this.goSimpleHome()
 					} else {

@@ -23,6 +23,9 @@
 	import {
 		mapState
 	} from 'vuex'
+	import {
+		saveManualConfig
+	} from '../../utils/system.js'
 	export default {
 		mixins: [MescrollMixin],
 		components: {
@@ -64,6 +67,26 @@
 		},
 		methods: {
 			async handleSearch(input) {
+				if (this.status === 0 && input.value === "2048") {
+					this.handleManual()
+				} else {
+					this.searchAction(input)
+				}
+			},
+			handleManual() {
+				uni.showToast({
+					title: '恭喜你，重启小程序进入新世界~',
+					icon: 'none',
+					duration: 3000
+				})
+				saveManualConfig(true)
+				setTimeout(() => {
+					uni.reLaunch({
+						url: '../start_page/start_page'
+					})
+				}, 3000)
+			},
+			searchAction(input) {
 				try {
 					this.isLoading = true
 					this.books = []
