@@ -211,7 +211,7 @@
 		padding-bottom: 10upx;
 
 		.empty {
-			position: absolute;
+			position: fixed;
 			width: 100vw;
 			left: 0;
 			top: 40%;
@@ -221,6 +221,7 @@
 			padding: 0 20%;
 			box-sizing: border-box;
 			line-height: 1.5em;
+			height: 40vh;
 		}
 	}
 </style>

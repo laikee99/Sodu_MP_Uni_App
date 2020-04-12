@@ -1,13 +1,15 @@
 <template>
 	<view class="home-container">
 		<uniNavBar :showLeft="false" :title="title" backgroundColor="#0387FE" shadow="false" color="white"></uniNavBar>
-		<TabShelf ref="shelf" :class="[tabIndex === 1 ? 'show' : 'hide']" />
-		<TabRank :class="[tabIndex === 2 ? 'show' : 'hide']" />
-		<TabUpdate :class="[tabIndex === 3 ? 'show' : 'hide']" />
-		<TabSearch :class="[tabIndex === 4 ? 'show' : 'hide']" />
-		<TabSetting :class="[tabIndex === 5 ? 'show' : 'hide']" />
+		<TabShelf ref="shelf" :class="[tabIndex === 1  && status === 1? 'show' : 'hide']" />
+		<TabShelfSimple :class="[tabIndex === 2   && status === 0? 'show' : 'hide']" />
+		<TabRank :class="[tabIndex === 3   && status === 1? 'show' : 'hide']" />
+		<TabUpdate :class="[tabIndex === 4   && status === 1? 'show' : 'hide']" />
+		<TabSearch :class="[tabIndex === 5  ? 'show' : 'hide']" />
+		<TabSetting :class="[tabIndex === 6   && status === 1? 'show' : 'hide']" />
+		<TabSync :class="[tabIndex === 7   && status === 0? 'show' : 'hide']" />
 		<view class="cover">
-			<view v-for="item in tabs" :key="item.index" class="tab-item" @click="navClick(item)">
+			<view v-if="showTab(item)" v-for="item in tabs" :key="item.index" class="tab-item" @click="navClick(item)">
 				<image class="tab-icon" :src="'../../static/images/tabbar/'+ item.image + [tabIndex === item.index ? '_selected':''] + '.png'"></image>
 				<view class="tab-name" :style="{'color' : tabIndex === item.index ? '#007aff':'#9B9B9B'}">{{item.title}}</view>
 			</view>
@@ -21,7 +23,12 @@
 	import TabUpdate from '../tab_update/tab_update'
 	import TabSearch from '../tab_search/tab_search'
 	import TabSetting from '../tab_setting/tab_setting'
+	import TabShelfSimple from '../tab_shelf_simple/tab_shelf_simple.vue'
+	import TabSync from '../sync_shelf/sync_shelf'
 	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
+	import {
+		mapState
+	} from 'vuex'
 	export default {
 		components: {
 			TabShelf,
@@ -29,13 +36,16 @@
 			TabUpdate,
 			TabSearch,
 			TabSetting,
+			TabSync,
+			TabShelfSimple,
 			uniNavBar
 		},
 		computed: {
 			title() {
 				let title = this.tabs[this.tabIndex - 1].title
 				return title
-			}
+			},
+			...mapState(['status'])
 		},
 		watch: {
 			tabIndex: {
@@ -53,42 +63,62 @@
 				tabs: [{
 						title: '书架',
 						image: 'tabbar_local_shelf',
-						index: 1
+						index: 1,
+						status: 1
+					},
+					{
+						title: '收藏夹',
+						image: 'tabbar_local_shelf',
+						index: 2,
+						status: 0
 					},
 					{
 						title: '排行',
 						image: 'tabbar_rank',
-						index: 2
+						index: 3,
+						status: 1
 					},
 					{
 						title: '最近更新',
 						image: 'tabbar_update',
-						index: 3
-					}, {
+						index: 4,
+						status: 1
+					},
+					{
 						title: '搜索',
 						image: 'tabbar_search',
-						index: 4
-					}, {
+						index: 5
+					},
+					{
 						title: '设置',
 						image: 'tabbar_setting',
-						index: 5
+						index: 6,
+						status: 1
+					},
+					{
+						title: '同步',
+						image: 'tabbar_setting',
+						index: 7,
+						status: 0
 					}
 				]
 			};
+		},
+		created() {
+			this.status === 0 ? this.tabIndex = 2 : this.tabIndex = 1
 		},
 		mounted() {},
 		methods: {
 			// 导航栏切换
 			navClick: function(e) {
 				this.tabIndex = e.index
+			},
+			showTab(item) {
+				if (item.status === this.status || typeof item.status === 'undefined') {
+					return true
+				}
+				return false
 			}
-		},
-		onPullDownRefresh() {
-			uni.stopPullDownRefresh()
-			uni.$emit('pullDwomRefresh')
-		},
-		onReachBottom() {
-			uni.$emit('loadMore')
 		}
 	}
 </script>

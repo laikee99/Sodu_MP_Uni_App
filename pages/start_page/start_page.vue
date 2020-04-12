@@ -37,9 +37,9 @@
 				try {
 					let res = await init()
 					if (res && res.code === 0) {
-						res.result.status = this.isManual ? 1 : 0
+						res.result.status = this.isManual || res.result.status
 						this.setInitData(res.result)
-						res.result.status ? this.goHome() : this.goSimpleHome()
+						this.goHome()
 					} else {
 						throw new Error()
 					}
@@ -51,12 +51,6 @@
 			goHome() {
 				uni.redirectTo({
 					url: '../../pages/home_page/home_page',
-					animationType: 'pop-in'
-				})
-			},
-			goSimpleHome() {
-				uni.redirectTo({
-					url: '../../pages/home_page_simple/home_page_simple',
 					animationType: 'pop-in'
 				})
 			}

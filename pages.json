@@ -15,13 +15,6 @@
 			}
 		},
 		{
-			"path": "pages/home_page_simple/home_page_simple",
-			"style": {
-				"navigationStyle": "custom",
-				"disableScroll": true
-			}
-		},
-		{
 			"path": "pages/home_page/home_page",
 			"style": {
 				"navigationStyle": "custom",
