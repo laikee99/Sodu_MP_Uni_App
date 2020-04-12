@@ -3,14 +3,13 @@
 		<mescroll-uni :fixed="false" class="scroll" ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption"
 		 :up="upOption">
 			<view v-if="books && books.length > 0">
-				<BookItem v-for="(item) in books" :key="item.bookId" :book="item" isShelf="true" @itemLongPress="handleItemLongPress"
-				 @bookClick="handleBookClick(item)" />
+				<BookItem v-for="(item) in books" :key="item.bookId" :book="item" isShelf="true" @itemLongPress="handleItemLongPress" />
 			</view>
 			<view v-else class="empty">
-				您的书架空空如也~
+				您的书架空空如也, 请搜索关键词后长按列表项添加收藏~。
 			</view>
 		</mescroll-uni>
-		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" @bookRefresh="bookRefresh" isShelf="true"
+		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" @bookRefresh="bookRefresh" type="shelf_simple"
 		 @deleteBook="handleDeleteBook" />
 	</view>
 </template>
@@ -21,11 +20,12 @@
 		addToShelf,
 		updateBook,
 		deleteBook
-	} from '@/utils/bookShelf.js'
+	} from '@/utils/bookShelfSimple.js'
 	import {
-		getBookInfo
-	} from '@/api/content.js'
-	import BookItem from '@/components/BookItem/BookItem.vue'
+		getUpdateSites
+	} from '../../api/sodu.js'
+
+	import BookItem from '@/components/book-item-simple/book-item-simple.vue'
 	import Popupmenus from '@/components/PopupMenus/index.vue'
 	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	export default {
@@ -125,23 +125,15 @@
 			},
 			async handleRefreshBook(book) {
 				try {
-					if (!book.sourceUrl || book.isLoading) {
+					if (!book.soduUpdatePageUrl || book.isLoading || book.type === 1) {
 						return
 					}
 					book.isLoading = true
-					let result = await this.requestBookInfo(book.sourceUrl)
-					if (!result || !result.catalogs || result.catalogs.length === 0) {
+					let result = await this.requestBookInfo(book.soduUpdatePageUrl, book.bookId, 1)
+					if (!result || result.code !== 0 || result.books.length === 0) {
 						return
 					}
-					book.lyWeb = result.webName
-					book.lastChapterName = result.catalogs[result.catalogs.length - 1].name
-					book.lastChapterUrl = result.catalogs[result.catalogs.length - 1].url
-
-					if (book.sourceUrl === book.lastChapterUrl || book.userlastCatalogsUrl === book.lastChapterUrl) {
-						book.hasNew = false
-					} else {
-						book.hasNew = true
-					}
+					book.chapterName = result.books[0].chapterName
 					this.updateShelfBook(book)
 				} catch (e) {
 					console.log(e)
@@ -150,10 +142,10 @@
 				}
 			},
 			// 加载目录数据
-			async requestBookInfo(url, time = 0) {
+			async requestBookInfo(url, bookId, page, time = 0) {
 				try {
 					this.isRequestBookInfo = true
-					let res = await getBookInfo(url)
+					let res = await getUpdateSites(url, bookId, page)
 					if (res.code === 0) {
 						return res.result
 					} else {
@@ -181,22 +173,6 @@
 				this.books.sort((a, b) => {
 					return b.shelfTime - a.shelfTime
 				})
-			},
-			//  更新书签
-			updateShelfBookMark(item) {
-				let index = this.books.findIndex(e => e.bookId === item.id)
-				if (index === -1) {
-					return
-				}
-				let book = this.books[index]
-				book.chapterName = item.name
-				book.sourceUrl = item.url
-				book.lyWeb = item.lyWeb
-				if (book.lastChapterUrl === item.url) {
-					book.hasNew = false
-				}
-				book.shelfTime = +new Date()
-				this.updateShelfBook(book)
 			},
 			handleItemLongPress(item) {
 				this.selectedBook = item
@@ -242,6 +218,9 @@
 			font-weight: 34upx;
 			color: #808080;
 			text-align: center;
+			padding: 0 20%;
+			box-sizing: border-box;
+			line-height: 1.5em;
 		}
 	}
 </style>

@@ -3,6 +3,13 @@ import {
 } from '../utils/bookShelf.js'
 
 import {
+	getShelfBooksSync as SimpleSync
+} from '../utils/bookShelfSimple.js'
+
+
+import store from '../store/index.js'
+
+import {
 	post
 } from '../utils/request.js'
 
@@ -27,24 +34,25 @@ export function getConfig() {
 }
 
 export function upload(config) {
-	let books = getShelfBooksSync()
-	if (books) {
+	let books = store.state.status ? getShelfBooksSync() : SimpleSync()
+	console.log(store)
+	if (books && books.length > 0) {
 		return post('/sync/upload', {
 			config,
-			books
+			books,
+			status: store.state.status
 		})
 	} else {
-		uni.showToast({
-			title: '没有可上传的数据',
-			icon: 'none',
-			duration: 2000
-		})
+		return {
+			code: -1,
+			message: '没有可上传的数据'
+		}
 	}
 }
 
 export function download(config) {
 	return post('/sync/download', {
-		config
+		config,
+		status: store.state.status
 	})
 }
-

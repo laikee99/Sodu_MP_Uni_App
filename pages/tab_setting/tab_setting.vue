@@ -11,7 +11,7 @@
 				<uniIcons type="arrowright"></uniIcons>
 			</view>
 		</view>
-		<view class="navigator-text" @click="handleDisclaimer">免责声明</view>
+		<view class="navigator-text" @click="handleDisclaimer">使用须知</view>
 	</view>
 </template>
 

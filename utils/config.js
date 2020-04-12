@@ -27,6 +27,7 @@ const defaultConfig = {
 	fontSize: 20,
 	lineHeight: 1.6,
 	theme: 'value1',
+	readType: 1 // 1 滚动 2 滑动
 }
 
 export function getConfig() {

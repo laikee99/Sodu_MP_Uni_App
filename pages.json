@@ -1,20 +1,28 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/start_page/start_page",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTitleText": "阅记",
+				"navigationBarBackgroundColor": "#0387FE",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
 			"path": "pages/content_page/content_page",
 			"style": {
 				"navigationStyle": "custom"
 			}
 		},
 		{
-			"path": "pages/start_page/start_page",
+			"path": "pages/home_page_simple/home_page_simple",
 			"style": {
-				// "navigationStyle": "custom",
-				"navigationBarTitleText": "小说搜索阅读",
-				"navigationBarBackgroundColor": "#0387FE",
-				"navigationBarTextStyle": "white"
+				"navigationStyle": "custom"
 			}
 		},
+
+
 		{
 			"path": "pages/home_page/home_page",
 			"style": {
@@ -86,7 +94,7 @@
 		{
 			"path": "pages/disclaimer_page/disclaimer_page",
 			"style": {
-				"navigationBarTitleText": "免责声明",
+				"navigationBarTitleText": "使用说明",
 				"navigationBarBackgroundColor": "#0387FE",
 				"navigationBarTextStyle": "white"
 			}

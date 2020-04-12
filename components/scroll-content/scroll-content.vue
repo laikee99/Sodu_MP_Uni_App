@@ -8,15 +8,16 @@
 					</view>
 				</view>
 				<view class="btns">
+					<view class="btn max" @click="handleSwitchAction(3)">
+						下一章
+					</view>
 					<view class="btn" @click="handleSwitchAction(1)">
 						上一章
 					</view>
 					<view class="btn" @click="handleSwitchAction(2)">
 						目录
 					</view>
-					<view class="btn" @click="handleSwitchAction(3)">
-						下一章
-					</view>
+
 					<view v-if="book && book.soduUpdatePageUrl" class="btn" @click="handleSwitchAction(4)">
 						更新站点
 					</view>
@@ -110,23 +111,28 @@
 			display: flex;
 			justify-content: space-around;
 			align-items: center;
-			height: 80upx;
+			min-height: 80upx;
 			z-index: 2;
 			position: relative;
 			margin-top: 20px;
+			box-sizing: border-box;
+			flex-wrap: wrap;
 
 
 			.btn {
-				height: 60upx;
-				width: 140upx;
+				height: 70upx;
+				width: 160upx;
 				font-size: 28upx;
 				border: 1px solid #c4c4c4;
 				background-color: rgba(255, 255, 255, 0.8);
-				line-height: 60upx;
+				line-height: 70upx;
 				text-align: center;
-				border-radius: 8upx;
-				box-sizing: border-box;
+				border-radius: 10upx;
+				margin-bottom: 20upx;
+			}
 
+			.max {
+				width: 90vw;
 			}
 		}
 	}

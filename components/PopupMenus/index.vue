@@ -1,23 +1,45 @@
 <template>
 	<view class="pupup-menus-container" @touchmove="stopPop" @click="hiddenMenus">
-		<view class="menu-item book-name" @click="stopPop">
-			{{book.name}}
-		</view>
-		<view class="split"></view>
+		<view v-if="isShelf">
+			<view class="menu-item book-name" @click="stopPop">
+				{{book.name}}
+			</view>
+			<view class="split"></view>
 
-		<view class="menu-item" @click="handleRefresh">
-			检查更新
-		</view>
-		<view class="split"></view>
+			<view class="menu-item" @click="handleRefresh">
+				检查更新
+			</view>
+			<view class="split"></view>
 
-		<view v-if="book.soduUpdatePageUrl" class="menu-item" @click="handleViewUpdateSites">
-			查看更新站点
-		</view>
-		<view class="split"></view>
+			<view v-if="book.soduUpdatePageUrl" class="menu-item" @click="handleViewUpdateSites">
+				查看更新站点
+			</view>
+			<view class="split"></view>
 
-		<view class="menu-item delete" @click="handleDeleteBook">
-			从书架中移除
+			<view class="menu-item delete" @click="handleDeleteBook">
+				从书架中移除
+			</view>
 		</view>
+
+		<view v-if="type === 'shelf_simple'">
+			<view class="menu-item book-name" @click="stopPop">
+				{{book.name}}
+			</view>
+			<view class="split"></view>
+			<view class="menu-item delete" @click="handleDeleteBook">
+				从收藏夹中移除
+			</view>
+		</view>
+		<view v-if="type==='search'">
+			<view class="menu-item book-name" @click="stopPop">
+				{{book.name}}
+			</view>
+			<view class="split"></view>
+			<view class="menu-item" @click="handleAddToShelf">
+				添加收藏
+			</view>
+		</view>
+
 	</view>
 </template>
 
@@ -32,10 +54,13 @@
 				type: Boolean,
 				default: false
 			},
+			type: {
+				type: String,
+				default: ''
+			},
 		},
 		methods: {
 			stopPop() {
-				console.log('=========')
 			},
 			// 添加至个人书架
 			handleAddToShelf() {

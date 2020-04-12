@@ -5,12 +5,14 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
+		status: 0,
 		searchSources: null,
 		storeBookInfo: null
 	},
 	mutations: {
-		setSearch(state, sources) {
-			state.searchSources = sources
+		setInitData(state, data) {
+			state.searchSources = data.search
+			state.status = data.status
 		},
 		setBookInfo(state, info) {
 			state.storeBookInfo = info

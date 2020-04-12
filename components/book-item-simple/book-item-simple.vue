@@ -1,27 +1,21 @@
 <template>
-	<view class="book-item-container" @click="handleItemClick" @longpress="handLongPress">
+	<view class="book-item-container" @longpress="handLongPress">
 		<view class="main-container">
 			<view class="top">
 				<view class="name-contaienr">
 					<text class="name">
 						{{book.name}}
 					</text>
+					<view v-if="book.isLoading" class="loading">
+						<image src="../../static/images/other/tail-spin.svg" mode="scaleToFill"></image>
+					</view>
 				</view>
 				<text class="time">
-					{{book.lyWeb}}
+					{{book.updateTime || book.author}}
 				</text>
 			</view>
-			<view v-if="book.type !== 1" class="bottom">
-				当前:{{book.chapterName}}
-			</view>
 			<view v-if="isShelf" class="bottom">
-				最新:{{book.lastChapterName ? book.lastChapterName : '-'}}
-			</view>
-			<view v-if="book.author" class="bottom">
-				作者:{{book.author}}
-			</view>
-			<view v-if="book.desc" class="bottom">
-				简介:{{book.desc}}
+				{{book.chapterName || book.desc}}
 			</view>
 		</view>
 	</view>
@@ -37,9 +31,9 @@
 				type: Object,
 				default: null
 			},
-			status: {
-				type: Number,
-				default: 0
+			isShelf: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data() {
@@ -49,24 +43,6 @@
 		},
 		created() {},
 		methods: {
-			handleItemClick() {
-				if (this.status === 0) {
-					return
-				}
-				let url = '../../pages/sodu_update_sites/sodu_update_sites'
-				if (this.book.type === 1) {
-					url = '../../pages/book_info_page/book_info_page'
-				}
-				uni.navigateTo({
-					url: url +
-						`?book=${encodeUTF8(JSON.stringify(Object.assign({},this.book, {
-						fromSearch : true
-					}))
-					)}`,
-					animationType: 'pop-in',
-					animationDuration: 200
-				})
-			},
 			handLongPress() {
 				this.$emit('itemLongPress', this.book)
 			}

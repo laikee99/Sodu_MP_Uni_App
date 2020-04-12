@@ -154,7 +154,7 @@
 					delete this.book.fromSearch
 					delete this.book.type
 					uni.redirectTo({
-						url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}`,
+						url: url + `?book=${encodeUTF8(JSON.stringify(this.book))}&from=info`,
 						animationType: 'pop-in',
 						animationDuration: 200
 					})

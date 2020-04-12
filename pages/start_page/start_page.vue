@@ -26,28 +26,34 @@
 			this.initInfo()
 		},
 		methods: {
-			...mapMutations(['setSearch']),
+			...mapMutations(['setInitData']),
 			async initInfo() {
 				try {
 					let res = await init()
-					if (res.result.status) {
-						this.setSearch(res.result.search)
-					this.goHome()
-				} else {
-					throw new Error()
+					if (res && res.code === 0) {
+						this.setInitData(res.result)
+						res.result.status ? this.goHome() : this.goSimpleHome()
+					} else {
+						throw new Error()
+					}
+				} catch (e) {
+					console.log(e)
+					this.info = '启动失败,请稍候重试...'
 				}
-			} catch (e) {
-				console.log(e)
-				this.info = '启动失败,请稍候重试...'
+			},
+			goHome() {
+				uni.redirectTo({
+					url: '../../pages/home_page/home_page',
+					animationType: 'pop-in'
+				})
+			},
+			goSimpleHome() {
+				uni.redirectTo({
+					url: '../../pages/home_page_simple/home_page_simple',
+					animationType: 'pop-in'
+				})
 			}
-		},
-		goHome() {
-			uni.redirectTo({
-				url: '../../pages/home_page/home_page',
-				animationType: 'pop-in'
-			})
 		}
-	}
 	}
 </script>
 

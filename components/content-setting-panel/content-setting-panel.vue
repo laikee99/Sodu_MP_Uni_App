@@ -54,6 +54,13 @@
 				</view>
 			</view>
 
+			<!-- <view class="item">
+				<view class="label"> 阅读模式： </view>
+				<view class="btn-container">
+					<view :class="{'current' : config.readType === 1}" class="btn" @click="handleReadMode(1)"> 滚动 </view>
+					<view :class="{'current' : config.readType === 2}" class="btn" @click="handleReadMode(2)"> 滑动 </view>
+				</view>
+			</view> -->
 			<view class="item">
 				<view class="option-btns">
 					<view class="btn" @click="handleSwitchAction(1)"> 上一章 </view>
@@ -153,7 +160,7 @@
 			},
 			// 字体大小
 			handleFontSizeChange(isAdd) {
-				if ((isAdd && this.config.fontSize >= 50) || (!isAdd && this.config.fontSize <= 10)) {
+				if ((isAdd && this.config.fontSize >= 32) || (!isAdd && this.config.fontSize <= 16)) {
 					return
 				}
 				isAdd ? this.config.fontSize++ : this.config.fontSize--
@@ -185,6 +192,9 @@
 			handleReload() {
 				this.$emit('reload')
 				this.closePanel()
+			},
+			handleReadMode(type) {
+				this.config.readType = type
 			}
 		}
 	}
@@ -286,6 +296,11 @@
 						max-width: 120upx;
 						margin-right: 15upx;
 						box-sizing: border-box;
+					}
+
+					.current {
+						border-color: #007AFF;
+						color: #007AFF;
 					}
 
 				}

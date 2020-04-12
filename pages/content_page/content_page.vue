@@ -16,22 +16,23 @@
 			<view class="outer">
 				<scrollContent :book="book" :content="currentCatalog.content" :height="`calc(100vh - ${navBarHeight}px - 20px)`"
 				 @switchAction="handleSwitchAction"></scrollContent>
+				<!-- <swiperContent v-if="config.readType === 2" :config="config" :book="book" :content="currentCatalog.content"
+				 @switchAction="handleSwitchAction" /> -->
 			</view>
-			<view class="bottom">
-			</view>
+			<view class="bottom"></view>
 			<Setting v-if="showSettingPanel" :isExistShelf="isExistShelf" :book="book" @close="handleCloseSettingPanel"
 			 @updateConfig="handleUpdateConfig" @switchAction="handleSwitchAction" @addBookToShelf="checkBookStatus" @reload="handleReload" />
 
 		</view>
-		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
+		<Loading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></Loading>
 	</view>
 </template>
 
 <script>
 	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
 	import scrollContent from '../../components/scroll-content/scroll-content.vue'
+	// import swiperContent from '../../components/swiper-content/swiper-content.vue'
 	import Setting from '../../components/content-setting-panel/content-setting-panel.vue'
-	import wLoading from '@/components/w-loading/w-loading.vue';
 	import {
 		getContent,
 		getBookInfo
@@ -57,7 +58,7 @@
 			uniNavBar,
 			Setting,
 			scrollContent,
-			wLoading
+			// swiperContent
 		},
 		data() {
 			return {
@@ -87,24 +88,31 @@
 			},
 			...mapState(['storeBookInfo'])
 		},
-		created() {
+		created(e) {
 			uni.$on('navigateToCatalog', this.handleSwitchCatalog)
 			this.config = getConfig()
 		},
+		mounted() {},
 		onLoad(option) {
-			// if (!option.book) {
-			// 	return
-			// }
-			// this.book = JSON.parse(decodeUTF8(option.book))
-			this.book = {
-				bookId: "729376",
-				chapterName: "第三百二十六章 野心勃勃",
-				lyWeb: "乐安宣书网",
-				name: "绝对一番",
-				soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
-				sourceUrl: "https://www.dhzw8.com/book/424/424571/118145302.html",
-				updateTime: "2020/03/31 06:16"
+			if (option.from === 'info') {
+				this.setBookInfo(null)
 			}
+			if (!option.book) {
+				return
+			}
+			this.book = JSON.parse(decodeUTF8(option.book))
+			// // if (!option.book) {
+			// this.book = {
+			// 	bookId: "729376",
+			// 	chapterName: "第三百二十六章 野心勃勃",
+			// 	lyWeb: "乐安宣书网",
+			// 	name: "我的1979",
+			// 	soduUpdatePageUrl: "https://www.sodu2020.com/mulu_729376.html",
+			// 	sourceUrl: "https://www.zwdu.com/book/19834/5603288.html",
+			// 	updateTime: "2020/03/31 06:16"
+			// }
+			// // } else {
+			// // }
 			this.initData()
 		},
 		onUnload() {
@@ -139,6 +147,9 @@
 			},
 			// 加载当前章节数据
 			async requestCurrentCatalog(item, time = 0) {
+				if (this.isLoading) {
+					return
+				}
 				try {
 					if (item.content) {
 						this.currentCatalog = item
@@ -403,12 +414,12 @@
 
 		.bottom {
 			width: 100vw;
-			background: inherit;
 			height: 20px;
 			font-size: 24upx;
 			display: flex;
 			align-items: center;
 			padding-left: 30upx;
+			background: transparent;
 		}
 	}
 </style>

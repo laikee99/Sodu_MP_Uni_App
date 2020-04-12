@@ -4,9 +4,10 @@
 			<view class="search-container">
 				<uniSearchBar bgColor="#ffffff" radius='6' @confirm="handleSearch" @clear="handleClear" />
 			</view>
-			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" />
+			<BookItem v-for="(item) in books" :key="item.bookId" :book="item" @itemLongPress="handleItemLongPress" :status="status" />
 		</mescroll-uni>
 		<wLoading v-if="isLoading" class="loading-container" text="加载中..." mask="true" click="false"></wLoading>
+		<Popupmenus v-if="showMenu" :book="selectedBook" @closeMenu="closeMenu" type="search" />
 	</view>
 </template>
 
@@ -14,6 +15,7 @@
 	import uniSearchBar from '@/components/uni-search-bar/uni-search-bar.vue'
 	import BookItem from '../../components/search-book-item/search-book-item.vue'
 	import wLoading from '@/components/w-loading/w-loading.vue';
+	import Popupmenus from '@/components/PopupMenus/index.vue'
 	import {
 		search
 	} from '../../api/sodu.js'
@@ -26,7 +28,8 @@
 		components: {
 			uniSearchBar,
 			BookItem,
-			wLoading
+			wLoading,
+			Popupmenus
 		},
 		data() {
 			return {
@@ -57,15 +60,19 @@
 			};
 		},
 		computed: {
-			...mapState(['searchSources'])
+			...mapState(['searchSources', 'status'])
 		},
 		methods: {
 			async handleSearch(input) {
 				try {
 					this.isLoading = true
 					this.books = []
-					let count = this.searchSources.length
-					this.searchSources.forEach(e => {
+					let resouces = this.searchSources
+					if (!resouces || resouces.length === 0) {
+						resouces = ['sodu']
+					}
+					let count = resouces.length
+					resouces.forEach(e => {
 						search({
 							parm: input.value,
 							source: e
@@ -75,19 +82,26 @@
 							} else {
 								throw new Error()
 							}
-						}).catch(e => {}).finally(e => {
+						}).catch(e => {
+							console.log(e)
+						}).finally(e => {
 							count--
 							if (count === 0) {
 								this.isLoading = false
 							}
 						})
 					})
-				} catch (e) {}
+				} catch (e) {
+					console.log(e)
+				}
 			},
 			handleClear() {
 				this.books = []
 			},
 			handleItemLongPress(item) {
+				if (this.status !== 0) {
+					return
+				}
 				this.selectedBook = item
 				this.showMenu = true
 			},

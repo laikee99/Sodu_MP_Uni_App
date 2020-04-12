@@ -28,8 +28,9 @@
 			</view>
 		</view>
 		<view class="desc">
-			说明：小程序服务器只做数据转发，且只读写用户书架数据。不会读取您的其他信息，亦不会存储您输入的任何信息。该功能是实验性功能，可能会出现同步失败或错误等情况，敬请谅解。
+			说明：小程序服务器只做数据转发，且只读写用户书架数据。不会读取您的其他信息，亦不会存储您输入的任何信息。该功能是实验性功能，可能会出现同步失败或错误等情况，敬请谅解。关于WebDav如何使用配置，请自行网络搜索。
 		</view>
+		<view class="navigator-text" @click="handleDisclaimer">使用说明</view>
 		<Loading v-if="isLoading" class="loading-container" :text="loadingText" mask="true" click="false"></Loading>
 	</view>
 </template>
@@ -44,6 +45,9 @@
 	import {
 		saveBooks
 	} from '../../utils/bookShelf.js'
+	import {
+		mapState
+	} from 'vuex'
 	export default {
 		components: {},
 		data() {
@@ -51,11 +55,14 @@
 				isLoading: false,
 				loadingText: '加载中...',
 				config: {
-					server: '',
-					userName: '',
-					passWord: ''
+					server: 'https://dav.jianguoyun.com/dav/',
+					userName: 'ruobin521@gmail.com',
+					passWord: 'aepcumn27rfz9yrv'
 				}
 			};
+		},
+		computed: {
+			...mapState(['status'])
 		},
 		onLoad() {
 			let res = getConfig()
@@ -131,7 +138,7 @@
 					this.isLoading = true
 					saveConfig(this.config)
 					let res = await upload(this.config)
-					if (res.code === 0) {
+					if (res && res.code === 0) {
 						uni.showToast({
 							icon: 'success',
 							title: '上传成功',
@@ -150,8 +157,15 @@
 				} finally {
 					this.isLoading = false
 				}
+			},
+			handleDisclaimer() {
+				uni.navigateTo({
+					url: '../disclaimer_page/disclaimer_page',
+					animationDuration: 200,
+					animationType: 'pop-in'
 
-			}
+				})
+			},
 		}
 	}
 </script>
@@ -159,7 +173,12 @@
 <style lang="less">
 	.sync-page-container {
 		background-color: #f0f3f6;
-		min-height: 100vh;
+		position: relative;
+		min-height: 50vh;
+		box-sizing: border-box;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 10upx;
 
 		.form-container {
 			.form-item {
@@ -229,6 +248,13 @@
 			text-indent: 2em;
 			padding: 30upx;
 			line-height: 60upx;
+			font-size: 28upx;
+		}
+
+		.navigator-text {
+			text-align: center;
+			margin-top: 60upx;
+			color: #0387FE;
 			font-size: 28upx;
 		}
 	}
